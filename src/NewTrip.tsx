@@ -5,6 +5,7 @@ import { TripContext } from './TripContext';
 import { authAxios } from './configAPI';
 import { theme } from './theme';
 import { useContext, useState } from 'react';
+import { useHistory } from 'react-router-dom';
 import chevronUp from './images/chevron-up.png';
 import placeholderFlag from './images/flag_placeholder.png';
 import styled from 'styled-components';
@@ -44,6 +45,7 @@ export const NewTrip = () => {
   const [errorZip, setErrorZip] = useState(false);
   const [errorCovid, setErrorCovid] = useState(false);
   const [createTripError, setCreateTripError] = useState<any>();
+  const history = useHistory();
 
   const handleCountry = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setCountry(e.currentTarget.value);
@@ -165,6 +167,7 @@ export const NewTrip = () => {
 
       createTrip(newTrip);
       clearInputs();
+      history.push('/');
     }
   };
 
@@ -387,7 +390,11 @@ const Select = styled.select({
   '-webkit-appearance': 'none',
   '-moz-appearance': 'none',
   '-o-appearance': 'none',
-  background: `url(${chevronUp}) 95% / 3% no-repeat`,
+  background: `url(${chevronUp}) no-repeat`,
+  backgroundPosition: '96% 50%',
+  '@media all and (max-width: 750px)': {
+    backgroundPosition: '94% 50%',
+  },
 });
 
 const InputText = styled.input({
