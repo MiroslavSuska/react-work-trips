@@ -461,6 +461,7 @@ const ButtonSubmit = styled.button({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'space-between',
+  cursor: 'pointer',
   ':hover': {
     color: theme.secondaryBlack,
     backgroundColor: theme.buttonHoverColor,
