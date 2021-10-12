@@ -1,6 +1,6 @@
 import { TheTripMobile } from './TheTripMobile';
-import { TripContext } from './TripContext';
-import { theme } from './theme';
+import { TripContext } from '../context/TripContext';
+import { theme } from '../styles/theme';
 import { useContext } from 'react';
 import styled from 'styled-components';
 

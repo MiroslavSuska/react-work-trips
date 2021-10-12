@@ -1,6 +1,6 @@
-import { DivBody } from './GlobalStyle';
-import { Navigation } from './Navigation';
-import { TripContextProvider } from './TripContext';
+import { DivBody } from './styles/GlobalStyle';
+import { Navigation } from './router/Navigation';
+import { TripContextProvider } from './context/TripContext';
 
 export default function App() {
   return (

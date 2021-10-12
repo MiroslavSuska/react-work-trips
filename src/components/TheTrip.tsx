@@ -1,5 +1,5 @@
 import { TheFlag } from './TheFlag';
-import { theme } from './theme';
+import { theme } from '../styles/theme';
 import Moment from 'react-moment';
 import styled from 'styled-components';
 

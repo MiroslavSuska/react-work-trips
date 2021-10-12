@@ -1,10 +1,10 @@
-import { ErrorAPI } from './ErrorAPI';
-import { Loading } from './Loading';
-import { TheTrip } from './TheTrip';
-import { TheTripMobile } from './TheTripMobile';
-import { TipAndTrickSidebar } from './TipAndTrickSidebar';
-import { TripContext, TripContextProvider } from './TripContext';
-import { theme } from './theme';
+import { ErrorAPI } from '../components/ErrorAPI';
+import { Loading } from '../components/Loading';
+import { TheTrip } from '../components/TheTrip';
+import { TheTripMobile } from '../components/TheTripMobile';
+import { TipAndTrickSidebar } from '../components/TipAndTrickSidebar';
+import { TripContext, TripContextProvider } from '../context/TripContext';
+import { theme } from '../styles/theme';
 import { useContext } from 'react';
 import styled from 'styled-components';
 

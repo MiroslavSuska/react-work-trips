@@ -1,16 +1,16 @@
-import { theme } from './theme';
-import flagAustria from './images/flag_austria.png';
-import flagChina from './images/flag_china.png';
-import flagFrance from './images/flag_france.png';
-import flagGb from './images/flag_gb.png';
-import flagGreece from './images/flag_greece.png';
-import flagItaly from './images/flag_italy.png';
-import flagNetherlands from './images/flag_netherlands.png';
-import flagPlaceholder from './images/flag_placeholder.png';
-import flagPortugal from './images/flag_portugal.png';
-import flagSlovakia from './images/flag_slovakia.png';
-import flagSpain from './images/flag_spain.png';
-import flagSweden from './images/flag_sweden.png';
+import { theme } from '../styles/theme';
+import flagAustria from '../images/flag_austria.png';
+import flagChina from '../images/flag_china.png';
+import flagFrance from '../images/flag_france.png';
+import flagGb from '../images/flag_gb.png';
+import flagGreece from '../images/flag_greece.png';
+import flagItaly from '../images/flag_italy.png';
+import flagNetherlands from '../images/flag_netherlands.png';
+import flagPlaceholder from '../images/flag_placeholder.png';
+import flagPortugal from '../images/flag_portugal.png';
+import flagSlovakia from '../images/flag_slovakia.png';
+import flagSpain from '../images/flag_spain.png';
+import flagSweden from '../images/flag_sweden.png';
 import styled from 'styled-components';
 
 type Props = {

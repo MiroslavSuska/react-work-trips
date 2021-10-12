@@ -1,13 +1,13 @@
-import { ErrorAPI } from './ErrorAPI';
+import { ErrorAPI } from '../components/ErrorAPI';
 import { FiCheck } from 'react-icons/fi';
-import { MobileTripsSidebar } from './MobileTripsSidebar';
-import { TripContext } from './TripContext';
-import { authAxios } from './configAPI';
-import { theme } from './theme';
+import { MobileTripsSidebar } from '../components/MobileTripsSidebar';
+import { TripContext } from '../context/TripContext';
+import { authAxios } from '../API-config/configAPI';
+import { theme } from '../styles/theme';
 import { useContext, useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import chevronUp from './images/chevron-up.png';
-import placeholderFlag from './images/flag_placeholder.png';
+import chevronUp from '../images/chevron-up.png';
+import placeholderFlag from '../images/flag_placeholder.png';
 import styled from 'styled-components';
 
 type trip = {

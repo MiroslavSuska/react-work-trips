@@ -2,18 +2,18 @@ import { AiOutlinePlus } from 'react-icons/ai';
 import { BsClock } from 'react-icons/bs';
 import { FaBars } from 'react-icons/fa';
 import { Link, Route, BrowserRouter as Router, Switch } from 'react-router-dom';
-import { NewTrip } from './NewTrip';
-import { TripContext } from './TripContext';
-import { WorkTrips } from './WorkTrips';
-import { authAxios } from './configAPI';
-import { theme } from './theme';
+import { NewTrip } from '../views/NewTrip';
+import { TripContext } from '../context/TripContext';
+import { WorkTrips } from '../views/WorkTrips';
+import { authAxios } from '../API-config/configAPI';
+import { theme } from '../styles/theme';
 import { useContext, useEffect, useState } from 'react';
-import logo from './images/cleevio_logo.png';
+import logo from '../images/cleevio_logo.png';
 import styled from 'styled-components';
 
 export const Navigation = () => {
   const [mobileNavbar, setMobileNavbar] = useState(false);
-  const [size, setSize] = useState(window.innerWidth);
+  const [windowSize, setWindowSize] = useState(window.innerWidth);
   const { addTrips, addCountries, setTripErrorAPI, setCountryErrorAPI, setLoadingAPI } =
     useContext(TripContext);
 
@@ -45,9 +45,10 @@ export const Navigation = () => {
     fetchCountryData();
   }, []);
 
+  // handle windowSize on resize
   useEffect(() => {
     const handleResize = () => {
-      setSize(window.innerWidth);
+      setWindowSize(window.innerWidth);
     };
 
     window.addEventListener('resize', handleResize);
@@ -55,9 +56,10 @@ export const Navigation = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  // close mobile navbar on bigger window size
   useEffect(() => {
-    if (size > 750 && mobileNavbar) setMobileNavbar(false);
-  }, [size, mobileNavbar]);
+    if (windowSize > 750 && mobileNavbar) setMobileNavbar(false);
+  }, [windowSize, mobileNavbar]);
 
   const handleNavButton = () => {
     setMobileNavbar(prev => !prev);
@@ -71,7 +73,7 @@ export const Navigation = () => {
         </ButtonBurger>
         <NavStyled
           style={{
-            top: mobileNavbar ? '0' : !mobileNavbar && size > 750 ? '0' : '-100vh',
+            top: mobileNavbar ? '0' : !mobileNavbar && windowSize > 750 ? '0' : '-100vh',
           }}
         >
           <LinkBrand href='#'>
