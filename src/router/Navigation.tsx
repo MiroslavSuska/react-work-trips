@@ -1,7 +1,7 @@
 import { AiOutlinePlus } from 'react-icons/ai';
 import { BsClock } from 'react-icons/bs';
 import { FaBars } from 'react-icons/fa';
-import { Link, Route, BrowserRouter as Router, Switch } from 'react-router-dom';
+import { Link, Redirect, Route, BrowserRouter as Router, Switch } from 'react-router-dom';
 import { NewTrip } from '../views/NewTrip';
 import { TripContext } from '../context/TripContext';
 import { WorkTrips } from '../views/WorkTrips';
@@ -76,7 +76,7 @@ export const Navigation = () => {
             top: mobileNavbar ? '0' : !mobileNavbar && windowSize > 750 ? '0' : '-100vh',
           }}
         >
-          <LinkBrand href='#'>
+          <LinkBrand href='/all-trips'>
             <img src={logo} alt='logo' />
           </LinkBrand>
 
@@ -87,7 +87,7 @@ export const Navigation = () => {
               </LinkNewTrip>
             </Li>
             <Li>
-              <LinkTrips to='/' onClick={handleNavButton}>
+              <LinkTrips to='/all-trips' onClick={handleNavButton}>
                 <BsClock /> <SpanTextButton>Your Trips</SpanTextButton>
               </LinkTrips>
             </Li>
@@ -99,9 +99,10 @@ export const Navigation = () => {
             <Route path='/new-trip'>
               <NewTrip />
             </Route>
-            <Route path='/'>
+            <Route path='/all-trips'>
               <WorkTrips />
             </Route>
+            <Redirect from='/' to='/all-trips' />
           </Switch>
         </DivContent>
       </Router>

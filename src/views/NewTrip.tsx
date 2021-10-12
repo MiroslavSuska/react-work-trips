@@ -93,7 +93,7 @@ export const NewTrip = () => {
     else return false;
   };
 
-  // reset all inputs and errors
+  // reset all inputs
   const clearInputs = () => {
     setCountry('');
     setEndDate('');
@@ -105,6 +105,10 @@ export const NewTrip = () => {
     setStreet('');
     setStreetNumber('');
     setZipCode('');
+  };
+
+  // reset all errors
+  const clearErrors = () => {
     setErrorStartDate(false);
     setErrorEndDate(false);
     setErrorCompany(false);
@@ -115,8 +119,21 @@ export const NewTrip = () => {
     setCreateTripError('');
   };
 
+  // check for right inputs and reset errors
+  const checkErrors = () => {
+    if (startDate !== '') setErrorStartDate(false);
+    if (endDate !== '') setErrorEndDate(false);
+    if (dateIsValid()) {
+      setErrorProperDate(false);
+    } else setErrorProperDate(true);
+    if (company !== '') setErrorCompany(false);
+    if (country !== '') setErrorCountry(false);
+    if (zipCode !== '') setErrorZip(false);
+    if (covidStatus !== '') setErrorCovid(false);
+  };
+
   // validate if start date is before or same as end date
-  const dateValidation = () => {
+  const dateIsValid = () => {
     const firstDate = startDate;
     const secondDate = endDate;
     if (firstDate <= secondDate) {
@@ -126,12 +143,12 @@ export const NewTrip = () => {
 
   // validate if inputs are fulfilled and if not, set error
   const validate = () => {
-    if (startDate && endDate && company && country && zipCode && covidStatus && dateValidation()) {
+    if (startDate && endDate && company && country && zipCode && covidStatus && dateIsValid()) {
       return true;
     }
     if (startDate === '') setErrorStartDate(true);
     if (endDate === '') setErrorEndDate(true);
-    if (dateValidation()) setErrorProperDate(true);
+    if (!dateIsValid()) setErrorProperDate(true);
     if (company === '') setErrorCompany(true);
     if (country === '') setErrorCountry(true);
     if (zipCode === '') setErrorZip(true);
@@ -173,8 +190,10 @@ export const NewTrip = () => {
 
       createTrip(newTrip);
       clearInputs();
-      history.push('/');
+      clearErrors();
+      history.push('/all-trips');
     }
+    checkErrors();
   };
 
   return (
@@ -182,152 +201,167 @@ export const NewTrip = () => {
       <DivNewTrip>
         <H1>New trip</H1>
 
-        <form onSubmit={handleSubmit}>
-          <DivFormBox>
-            <h5>Where do you want to go</h5>
-            <DivSelectWrapper>
-              <Select
-                name='countries'
-                id='country-select'
-                onChange={handleCountry}
-                value={country}
-                style={{ borderColor: errorCountry ? theme.errorColor : theme.borderColor }}
-              >
-                <option value=''>Select country</option>
-                {countries.map((country, index) => (
-                  <Option value={country.label} key={index}>
-                    {country.label}
-                  </Option>
-                ))}
-              </Select>
-            </DivSelectWrapper>
-            {countryErrorAPI && <ErrorAPI errorText={countryErrorAPI} />}
-            {errorCountry && <DivAlert>Please pick a country</DivAlert>}
-          </DivFormBox>
+        <DivFormWrap>
+          <form onSubmit={handleSubmit}>
+            <DivFormBox>
+              <h5>Where do you want to go</h5>
+              <DivSelectWrapper>
+                <Select
+                  name='countries'
+                  id='country-select'
+                  onChange={handleCountry}
+                  value={country}
+                  style={{ borderColor: errorCountry ? theme.errorColor : theme.borderColor }}
+                >
+                  <option value=''>Select country</option>
+                  {countries.map((country, index) => (
+                    <Option value={country.label} key={index}>
+                      {country.label}
+                    </Option>
+                  ))}
+                </Select>
+              </DivSelectWrapper>
+              {countryErrorAPI && <ErrorAPI errorText={countryErrorAPI} />}
+              {errorCountry && <DivAlert>Please pick a country</DivAlert>}
+            </DivFormBox>
 
-          <DivFormBox>
-            <h5>Start date</h5>
-            <InputText
-              type='date'
-              placeholder='dd.mm.yy'
-              onChange={handleStartDate}
-              value={startDate}
-              className={startDate ? 'date-input--has-value' : ''}
-              style={{ borderColor: errorStartDate ? theme.errorColor : theme.borderColor }}
-            />
-            {errorStartDate && <DivAlert>Please pick a start date</DivAlert>}
-
-            <h5>End date</h5>
-            <InputText
-              type='date'
-              placeholder='dd.mm.yy'
-              onChange={handleEndDate}
-              value={endDate}
-              className={endDate ? 'date-input--has-value' : ''}
-              style={{ borderColor: errorEndDate ? theme.errorColor : theme.borderColor }}
-            />
-            {errorStartDate && <DivAlert>Please pick the end date</DivAlert>}
-            {errorProperDate && (
-              <DivAlert>
-                Please make sure you choose start date before or same day as end date
-              </DivAlert>
-            )}
-          </DivFormBox>
-
-          <DivFormBox>
-            <h5>Company name</h5>
-            <InputText
-              type='text'
-              placeholder='Type here ...'
-              onChange={handleCompany}
-              value={company}
-              style={{ borderColor: errorCompany ? theme.errorColor : theme.borderColor }}
-            />
-            {errorCompany && <DivAlert>Please type a company</DivAlert>}
-
-            <h5>City</h5>
-            <InputText type='text' placeholder='Type here ...' onChange={handleCity} value={city} />
-
-            <h5>Street</h5>
-            <InputText
-              type='text'
-              placeholder='Type here ...'
-              onChange={handleStreet}
-              value={street}
-            />
-
-            <h5>Street number</h5>
-            <InputText
-              type='text'
-              placeholder='Type here ...'
-              onChange={handleStreetNumber}
-              value={streetNumber}
-            />
-
-            <h5>Zip code</h5>
-            <InputText
-              type='text'
-              placeholder='Type here ...'
-              onChange={handleZipCode}
-              value={zipCode}
-              style={{ borderColor: errorZip ? theme.errorColor : theme.borderColor }}
-            />
-            {errorZip && <DivAlert>Please type a zip code</DivAlert>}
-          </DivFormBox>
-
-          <DivFormBox>
-            <h5>
-              Have you been recently tested for <b>COVID-19?</b>
-            </h5>
-
-            <DivRadio>
-              <input
-                type='radio'
-                id='covid-yes'
-                name='radio-covid'
-                value='yes'
-                onChange={handleCovidStatus}
-                checked={covidStatus === 'yes'}
+            <DivFormBox>
+              <h5>Start date</h5>
+              <InputText
+                type='date'
+                placeholder='dd.mm.yy'
+                onChange={handleStartDate}
+                value={startDate}
+                className={startDate ? 'date-input--has-value' : ''}
+                style={{
+                  borderColor:
+                    errorStartDate || errorProperDate ? theme.errorColor : theme.borderColor,
+                }}
               />
-              <label htmlFor='covid-yes'>Yes</label>
-            </DivRadio>
+              {errorStartDate && <DivAlert>Please pick a start date</DivAlert>}
 
-            <DivRadio>
-              <input
-                type='radio'
-                id='covid-no'
-                name='radio-covid'
-                value='no'
-                onChange={handleCovidStatus}
-                checked={covidStatus === 'no'}
+              <h5>End date</h5>
+              <InputText
+                type='date'
+                placeholder='dd.mm.yy'
+                onChange={handleEndDate}
+                value={endDate}
+                className={endDate ? 'date-input--has-value' : ''}
+                style={{
+                  borderColor:
+                    errorEndDate || errorProperDate ? theme.errorColor : theme.borderColor,
+                }}
               />
-              <label htmlFor='covid-no'>No</label>
-            </DivRadio>
-            {errorCovid && <DivAlert>Please choose if you have been tested for COVID-19</DivAlert>}
+              {errorStartDate && <DivAlert>Please pick the end date</DivAlert>}
+              {errorProperDate && (
+                <DivAlert>
+                  Please make sure you choose start date before or same day as end date
+                </DivAlert>
+              )}
+            </DivFormBox>
 
-            {covidStatus === 'yes' ? (
-              <DivTestDate>
-                <h5>Date of receiving test results</h5>
-                <InputText
-                  type='date'
-                  placeholder='dd.mm.yy'
-                  onChange={handleCovidDate}
-                  value={covidDate}
-                  className={covidDate ? 'date-input--has-value' : ''}
+            <DivFormBox>
+              <h5>Company name</h5>
+              <InputText
+                type='text'
+                placeholder='Type here ...'
+                onChange={handleCompany}
+                value={company}
+                style={{ borderColor: errorCompany ? theme.errorColor : theme.borderColor }}
+              />
+              {errorCompany && <DivAlert>Please type a company</DivAlert>}
+
+              <h5>City</h5>
+              <InputText
+                type='text'
+                placeholder='Type here ...'
+                onChange={handleCity}
+                value={city}
+              />
+
+              <h5>Street</h5>
+              <InputText
+                type='text'
+                placeholder='Type here ...'
+                onChange={handleStreet}
+                value={street}
+              />
+
+              <h5>Street number</h5>
+              <InputText
+                type='text'
+                placeholder='Type here ...'
+                onChange={handleStreetNumber}
+                value={streetNumber}
+              />
+
+              <h5>Zip code</h5>
+              <InputText
+                type='text'
+                placeholder='Type here ...'
+                onChange={handleZipCode}
+                value={zipCode}
+                style={{ borderColor: errorZip ? theme.errorColor : theme.borderColor }}
+              />
+              {errorZip && <DivAlert>Please type a zip code</DivAlert>}
+            </DivFormBox>
+
+            <DivFormBox>
+              <h5>
+                Have you been recently tested for <b>COVID-19?</b>
+              </h5>
+
+              <DivRadio>
+                <input
+                  type='radio'
+                  id='covid-yes'
+                  name='radio-covid'
+                  value='yes'
+                  onChange={handleCovidStatus}
+                  checked={covidStatus === 'yes'}
                 />
-              </DivTestDate>
-            ) : (
-              <div />
-            )}
-          </DivFormBox>
+                <label htmlFor='covid-yes'>Yes</label>
+              </DivRadio>
 
-          <DivEmpty />
-          <ButtonSubmit>
-            Save <FiCheck />
-          </ButtonSubmit>
+              <DivRadio>
+                <input
+                  type='radio'
+                  id='covid-no'
+                  name='radio-covid'
+                  value='no'
+                  onChange={handleCovidStatus}
+                  checked={covidStatus === 'no'}
+                />
+                <label htmlFor='covid-no'>No</label>
+              </DivRadio>
+              {errorCovid && (
+                <DivAlert>Please choose if you have been tested for COVID-19</DivAlert>
+              )}
 
-          {createTripError && <ErrorAPI errorText={createTripError} />}
-        </form>
+              {covidStatus === 'yes' ? (
+                <DivTestDate>
+                  <h5>Date of receiving test results</h5>
+                  <InputText
+                    type='date'
+                    placeholder='dd.mm.yy'
+                    onChange={handleCovidDate}
+                    value={covidDate}
+                    className={covidDate ? 'date-input--has-value' : ''}
+                  />
+                </DivTestDate>
+              ) : (
+                <div />
+              )}
+            </DivFormBox>
+
+            <DivEmpty />
+            <ButtonSubmit>
+              Save <FiCheck />
+            </ButtonSubmit>
+
+            {createTripError && <ErrorAPI errorText={createTripError} />}
+          </form>
+        </DivFormWrap>
       </DivNewTrip>
 
       <MobileTripsSidebar />
@@ -354,6 +388,14 @@ const DivNewTrip = styled.div({
   },
   '@media all and (max-width: 750px)': {
     paddingTop: '30px',
+  },
+});
+
+const DivFormWrap = styled.div({
+  maxWidth: '500px',
+  margin: 'auto',
+  '@media all and (max-width: 750px)': {
+    maxWidth: '100%',
   },
 });
 
@@ -466,6 +508,9 @@ const ButtonSubmit = styled.button({
     color: theme.secondaryBlack,
     backgroundColor: theme.buttonHoverColor,
     transition: 'all 0.3s ease',
+  },
+  '@media all and (max-width:500px)': {
+    width: '100%',
   },
 });
 
