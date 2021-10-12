@@ -87,11 +87,13 @@ export const NewTrip = () => {
     setCovidDate(e.currentTarget.value);
   };
 
+  // check the string state of covid status and return boolean
   const covidData = () => {
     if (covidStatus === 'yes') return true;
     else return false;
   };
 
+  // reset all inputs and errors
   const clearInputs = () => {
     setCountry('');
     setEndDate('');
@@ -113,16 +115,7 @@ export const NewTrip = () => {
     setCreateTripError('');
   };
 
-  const createTrip = async (newTrip: trip) => {
-    try {
-      const response = await authAxios.post('/trip', newTrip);
-      const data = response.data;
-      addTrips(newTrip);
-    } catch (err) {
-      setCreateTripError(err);
-    }
-  };
-
+  // validate if start date is before or same as end date
   const dateValidation = () => {
     const firstDate = startDate;
     const secondDate = endDate;
@@ -131,6 +124,7 @@ export const NewTrip = () => {
     } else return false;
   };
 
+  // validate if inputs are fulfilled and if not, set error
   const validate = () => {
     if (startDate && endDate && company && country && zipCode && covidStatus && dateValidation()) {
       return true;
@@ -146,6 +140,18 @@ export const NewTrip = () => {
     return false;
   };
 
+  // create axios post request
+  const createTrip = async (newTrip: trip) => {
+    try {
+      const response = await authAxios.post('/trip', newTrip);
+      const data = response.data;
+      addTrips(newTrip);
+    } catch (err) {
+      setCreateTripError(err);
+    }
+  };
+
+  // handle submit button for new trip
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 

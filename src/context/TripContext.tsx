@@ -42,6 +42,7 @@ export const TripContextProvider = (props: { children: ReactNode }) => {
   const [countryErrorAPI, setCountryErrorAPI] = useState(null as any | string);
   const [loadingAPI, setLoadingAPI] = useState(false);
 
+  // add trips from API on page load, or one trip from form to context
   const addTrips = (fetchedTrips: tripType[] | tripType) => {
     if (Array.isArray(fetchedTrips)) {
       setTrips(prev => {
@@ -54,6 +55,7 @@ export const TripContextProvider = (props: { children: ReactNode }) => {
     }
   };
 
+  // add countries from API to context
   const addCountries = (fetchedCountries: countryType[]) => {
     setCountries(prev => {
       return [...prev, ...fetchedCountries];

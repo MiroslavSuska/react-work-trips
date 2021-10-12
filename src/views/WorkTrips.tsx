@@ -18,6 +18,8 @@ export const WorkTrips = () => {
         <div>
           {tripErrorAPI && <ErrorAPI errorText={tripErrorAPI} />}
           {loadingAPI && <Loading />}
+
+          {/* Trips for large screen */}
           <UlBigScreen>
             {trips.length > 0 ? (
               trips.map((trip, index) => (
@@ -37,6 +39,7 @@ export const WorkTrips = () => {
             )}
           </UlBigScreen>
 
+          {/* Trips for large screen */}
           <UlMobileScreen>
             {trips.length > 0 ? (
               trips.map((trip, index) => (
