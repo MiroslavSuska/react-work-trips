@@ -26,7 +26,8 @@ export const Navigation = () => {
         const fetchedTrips = response.data;
         addTrips(fetchedTrips);
       } catch (err) {
-        setTripErrorAPI(err);
+        //setTripErrorAPI(err);
+        console.log(err);
       }
       setLoadingAPI(false);
     };
@@ -37,7 +38,8 @@ export const Navigation = () => {
         const fetchedCountries = response.data;
         addCountries(fetchedCountries);
       } catch (err) {
-        setCountryErrorAPI(err);
+        //setCountryErrorAPI(err);
+        console.log(err);
       }
     };
 
@@ -76,7 +78,7 @@ export const Navigation = () => {
             top: mobileNavbar ? '0' : !mobileNavbar && windowSize > 750 ? '0' : '-100vh',
           }}
         >
-          <LinkBrand href='/all-trips'>
+          <LinkBrand href='/'>
             <img src={logo} alt='logo' />
           </LinkBrand>
 
@@ -87,7 +89,7 @@ export const Navigation = () => {
               </LinkNewTrip>
             </Li>
             <Li>
-              <LinkTrips to='/all-trips' onClick={handleNavButton}>
+              <LinkTrips to='/' onClick={handleNavButton}>
                 <BsClock /> <SpanTextButton>Your Trips</SpanTextButton>
               </LinkTrips>
             </Li>
@@ -99,10 +101,9 @@ export const Navigation = () => {
             <Route path='/new-trip'>
               <NewTrip />
             </Route>
-            <Route path='/all-trips'>
+            <Route path='/'>
               <WorkTrips />
             </Route>
-            <Redirect from='/' to='/all-trips' />
           </Switch>
         </DivContent>
       </Router>

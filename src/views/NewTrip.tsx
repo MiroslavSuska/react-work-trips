@@ -211,7 +211,10 @@ export const NewTrip = () => {
                   id='country-select'
                   onChange={handleCountry}
                   value={country}
-                  style={{ borderColor: errorCountry ? theme.errorColor : theme.borderColor }}
+                  style={{
+                    borderColor: errorCountry ? theme.errorColor : theme.borderColor,
+                    color: country ? theme.primaryBlack : theme.placeholderColor,
+                  }}
                 >
                   <option value=''>Select country</option>
                   {countries.map((country, index) => (
@@ -354,7 +357,7 @@ export const NewTrip = () => {
               )}
             </DivFormBox>
 
-            <DivEmpty />
+            <DivBorder />
             <ButtonSubmit>
               Save <FiCheck />
             </ButtonSubmit>
@@ -435,6 +438,10 @@ const Select = styled.select({
   padding: '10px 20px',
   fontSize: '14px',
   appearance: 'none',
+  color: theme.placeholderColor,
+  option: {
+    color: theme.primaryBlack,
+  },
   '-webkit-appearance': 'none',
   '-moz-appearance': 'none',
   '-o-appearance': 'none',
@@ -443,6 +450,11 @@ const Select = styled.select({
   '@media all and (max-width: 750px)': {
     backgroundPosition: '94% 50%',
   },
+});
+
+const Option = styled.option({
+  //color: theme.placeholderColor,
+  //backgroundImage: `url(${placeholderFlag})`,
 });
 
 const InputText = styled.input({
@@ -486,11 +498,6 @@ const DivTestDate = styled.div({
   paddingTop: '18px',
 });
 
-const DivEmpty = styled.div({
-  height: '30px',
-  borderBottom: `1px solid ${theme.borderColor}`,
-});
-
 const ButtonSubmit = styled.button({
   backgroundColor: theme.buttonColor,
   width: '200px',
@@ -514,10 +521,6 @@ const ButtonSubmit = styled.button({
   },
 });
 
-const Option = styled.option({
-  backgroundImage: `url(${placeholderFlag})`,
-});
-
 const DivAlert = styled.div({
   color: theme.errorColor,
   fontWeight: 'normal',
@@ -525,4 +528,9 @@ const DivAlert = styled.div({
   marginBottom: '7px',
   position: 'relative',
   top: '-7px',
+});
+
+const DivBorder = styled.div({
+  height: '30px',
+  borderBottom: `1px solid ${theme.borderColor}`,
 });
