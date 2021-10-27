@@ -7,10 +7,10 @@ import { theme } from '../styles/theme';
 import { useContext, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import chevronUp from '../images/chevron-up.png';
-import placeholderFlag from '../images/flag_placeholder.png';
 import styled from 'styled-components';
 
 type trip = {
+  id: undefined | string;
   start_date: string;
   end_date: string;
   company_name: string;
@@ -162,6 +162,8 @@ export const NewTrip = () => {
     try {
       const response = await authAxios.post('/trip', newTrip);
       const data = response.data;
+      console.log(data.id);
+      newTrip.id = data.id;
       addTrips(newTrip);
     } catch (err) {
       setCreateTripError(err);
@@ -174,6 +176,7 @@ export const NewTrip = () => {
 
     if (validate()) {
       const newTrip = {
+        id: undefined,
         start_date: startDate,
         end_date: endDate,
         company_name: company.trim(),

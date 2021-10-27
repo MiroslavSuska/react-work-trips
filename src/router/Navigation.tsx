@@ -1,8 +1,9 @@
 import { AiOutlinePlus } from 'react-icons/ai';
 import { BsClock } from 'react-icons/bs';
 import { FaBars } from 'react-icons/fa';
-import { Link, Redirect, Route, BrowserRouter as Router, Switch } from 'react-router-dom';
+import { Link, Route, BrowserRouter as Router, Switch } from 'react-router-dom';
 import { NewTrip } from '../views/NewTrip';
+import { TheTripDetail } from '../views/TheTripDetail';
 import { TripContext } from '../context/TripContext';
 import { WorkTrips } from '../views/WorkTrips';
 import { authAxios } from '../API-config/configAPI';
@@ -14,7 +15,7 @@ import styled from 'styled-components';
 export const Navigation = () => {
   const [mobileNavbar, setMobileNavbar] = useState(false);
   const [windowSize, setWindowSize] = useState(window.innerWidth);
-  const { addTrips, addCountries, setTripErrorAPI, setCountryErrorAPI, setLoadingAPI } =
+  const { trips, addTrips, addCountries, setTripErrorAPI, setCountryErrorAPI, setLoadingAPI } =
     useContext(TripContext);
 
   // Fetch data
@@ -26,8 +27,8 @@ export const Navigation = () => {
         const fetchedTrips = response.data;
         addTrips(fetchedTrips);
       } catch (err) {
-        //setTripErrorAPI(err);
-        console.log(err);
+        setTripErrorAPI(err);
+        //console.log(err);
       }
       setLoadingAPI(false);
     };
@@ -38,8 +39,8 @@ export const Navigation = () => {
         const fetchedCountries = response.data;
         addCountries(fetchedCountries);
       } catch (err) {
-        //setCountryErrorAPI(err);
-        console.log(err);
+        setCountryErrorAPI(err);
+        //console.log(err);
       }
     };
 
@@ -98,6 +99,14 @@ export const Navigation = () => {
 
         <DivContent style={{ display: mobileNavbar ? 'none' : 'block' }}>
           <Switch>
+            {/* {trips.map(trip => (
+              <Route path={`/trip/:id`} key={trip.id}>
+                <TheTripDetail />
+              </Route>
+            ))} */}
+            <Route path={`/trip/:id`}>
+              <TheTripDetail />
+            </Route>
             <Route path='/new-trip'>
               <NewTrip />
             </Route>

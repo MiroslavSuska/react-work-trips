@@ -3,7 +3,7 @@ import { Loading } from '../components/Loading';
 import { TheTrip } from '../components/TheTrip';
 import { TheTripMobile } from '../components/TheTripMobile';
 import { TipAndTrickSidebar } from '../components/TipAndTrickSidebar';
-import { TripContext, TripContextProvider } from '../context/TripContext';
+import { TripContext } from '../context/TripContext';
 import { theme } from '../styles/theme';
 import { useContext } from 'react';
 import styled from 'styled-components';
@@ -25,6 +25,7 @@ export const WorkTrips = () => {
               trips.map((trip, index) => (
                 <Li key={index}>
                   <TheTrip
+                    id={trip.id}
                     company={trip.company_name}
                     startDate={trip.start_date}
                     endDate={trip.end_date}

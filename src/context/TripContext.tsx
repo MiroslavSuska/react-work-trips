@@ -1,6 +1,7 @@
 import { ReactNode, createContext, useState } from 'react';
 
 type tripType = {
+  id: undefined | string;
   start_date: string;
   end_date: string;
   company_name: string;
