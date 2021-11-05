@@ -1,3 +1,4 @@
+import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import { ErrorAPI } from '../components/ErrorAPI';
 import { Loading } from '../components/Loading';
 import { TheTrip } from '../components/TheTrip';
@@ -20,25 +21,24 @@ export const WorkTrips = () => {
           {loadingAPI && <Loading />}
 
           {/* Trips for large screen */}
-          <UlBigScreen>
-            {trips.length > 0 ? (
-              trips.map((trip, index) => (
-                <Li key={index}>
-                  <TheTrip
-                    id={trip.id}
-                    company={trip.company_name}
-                    startDate={trip.start_date}
-                    endDate={trip.end_date}
-                    address={trip.address}
-                    covid={trip.covid}
-                    covidDate={trip.covid_test_date}
-                  />
-                </Li>
-              ))
-            ) : (
-              <h2>No trips yet</h2>
-            )}
-          </UlBigScreen>
+
+          {trips.length > 0 ? (
+            trips.map((trip, index) => (
+              <Li key={index}>
+                <TheTrip
+                  id={trip.id}
+                  company={trip.company_name}
+                  startDate={trip.start_date}
+                  endDate={trip.end_date}
+                  address={trip.address}
+                  covid={trip.covid}
+                  covidDate={trip.covid_test_date}
+                />
+              </Li>
+            ))
+          ) : (
+            <h2>No trips yet</h2>
+          )}
 
           {/* Trips for large screen */}
           <UlMobileScreen>
@@ -46,6 +46,7 @@ export const WorkTrips = () => {
               trips.map((trip, index) => (
                 <Li key={index}>
                   <TheTripMobile
+                    id={trip.id}
                     company={trip.company_name}
                     startDate={trip.start_date}
                     endDate={trip.end_date}

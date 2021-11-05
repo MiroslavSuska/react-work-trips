@@ -10,5 +10,7 @@ export const theme = {
   buttonColor: '#F8D964',
   buttonHoverColor: '#FEC527',
   darkBlue: '#0A1E40',
-  errorColor: '#D33927',
+  errorColor: '#cc4435',
+  buttonRedColor: '#d36458',
+  successColor: '#2dc751',
 };

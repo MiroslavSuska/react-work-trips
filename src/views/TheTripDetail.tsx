@@ -1,17 +1,15 @@
 import { ControlButtons } from '../components/ControlButtons';
-import { ErrorAPI } from '../components/ErrorAPI';
-import { Loading } from '../components/Loading';
-import { TheTrip } from '../components/TheTrip';
-import { TheTripMobile } from '../components/TheTripMobile';
+import { TheFlag } from '../components/TheFlag';
 import { TipAndTrickSidebar } from '../components/TipAndTrickSidebar';
 import { TripContext } from '../context/TripContext';
 import { theme } from '../styles/theme';
 import { useContext } from 'react';
-import { useHistory, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
+import Moment from 'react-moment';
 import styled from 'styled-components';
 
 type tripType = {
-  id: string | undefined;
+  id: undefined | string;
   startDate: string;
   endDate: string;
   company: string;
@@ -28,34 +26,50 @@ type tripType = {
 
 type TripRouteParams = {
   trip: string;
-  id: string;
+  tripID: string;
 };
 
 export const TheTripDetail = () => {
   const { trips } = useContext(TripContext);
-  const { id } = useParams<TripRouteParams>();
-  const trip = trips.find(trip => trip.id === id);
-
-  const editTrip = () => {};
-
-  const deleteTrip = () => {};
+  const { tripID } = useParams<TripRouteParams>();
+  const trip = trips.find(trip => trip.id === tripID);
 
   return (
     <DivContainer>
       <DivTrip>
         <H1>Trip</H1>
         <DivTripDetail>
-          <div>{trip?.address.country}</div>
-          <div>{trip?.address.city}</div>
-          <div>{trip?.address.street}</div>
-          <div>{trip?.address.zip}</div>
-          <div>{trip?.company_name}</div>
-          <div>{trip?.start_date}</div>
-          <div>{trip?.end_date}</div>
-          <div>{trip?.covid}</div>
-          <div>{trip?.covid_test_date}</div>
+          <DivTripHeader>
+            <TheFlag image={trip?.address.country} imageSize='40' />
+            <DivCountry>{trip?.address.country}</DivCountry>
+          </DivTripHeader>
+
+          <DivTripBody>
+            <DivWrap>
+              <span>Company</span>
+              <DivCompany>{trip?.company_name}</DivCompany>
+            </DivWrap>
+
+            <DivWrap>
+              <span>Address</span>
+
+              <DivAddress>{trip?.address.city}</DivAddress>
+              <DivAddress>{trip?.address.street}</DivAddress>
+              <DivAddress>{trip?.address.street_num}</DivAddress>
+              <DivAddress>{trip?.address.zip}</DivAddress>
+            </DivWrap>
+
+            <DivWrap>
+              <span>Date</span>
+              <DivDate>
+                {' '}
+                <Moment format='D MMM YYYY'>{trip?.start_date}</Moment> -{' '}
+                <Moment format='D MMM YYYY'>{trip?.end_date}</Moment>
+              </DivDate>
+            </DivWrap>
+          </DivTripBody>
         </DivTripDetail>
-        <ControlButtons delete={deleteTrip} edit={editTrip} />
+        <ControlButtons tripID={tripID} />
       </DivTrip>
 
       <TipAndTrickSidebar />
@@ -97,22 +111,57 @@ const H1 = styled.h1({
   textAlign: 'left',
 });
 
-const UlBigScreen = styled.ul({
-  padding: 0,
-  '@media all and (max-width: 750px)': {
-    display: 'none',
-  },
+const DivTripHeader = styled.div({
+  display: 'flex',
+  alignItems: 'center',
+  marginBottom: '25px',
 });
 
-const Li = styled.li({
-  listStyleType: 'none',
-  marginBottom: '20px',
-});
-
-const UlMobileScreen = styled.ul({
-  padding: 0,
-  display: 'none',
-  '@media all and (max-width: 750px)': {
+const DivWrap = styled.div({
+  marginBottom: '15px',
+  span: {
     display: 'block',
+    fontWeight: 400,
+    fontSize: '18px',
+    color: theme.tertiaryGrey,
+    marginBottom: '10px',
   },
+});
+
+const DivCountry = styled.div({
+  fontWeight: 600,
+  fontSize: '24px',
+  color: theme.secondaryBlack,
+});
+
+const DivTripBody = styled.div({
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'start',
+});
+const DivDate = styled.div({
+  fontWeight: 'normal',
+  fontSize: '14px',
+  color: theme.primaryBlack,
+  textAlign: 'left',
+});
+
+const DivCompany = styled.div({
+  fontWeight: 'normal',
+  fontSize: '16px',
+  color: theme.secondaryBlack,
+});
+
+const DivAddress = styled.div({
+  fontWeight: 'normal',
+  fontSize: '14px',
+  color: theme.primaryBlack,
+  textAlign: 'left',
+});
+
+const span = styled.span({
+  fontWeight: 400,
+  fontSize: '18px',
+  color: theme.tertiaryGrey,
+  marginBottom: '15px',
 });

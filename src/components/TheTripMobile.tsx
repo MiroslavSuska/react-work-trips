@@ -4,6 +4,7 @@ import Moment from 'react-moment';
 import styled from 'styled-components';
 
 type tripType = {
+  id: undefined | string;
   startDate: string;
   endDate: string;
   company: string;
@@ -20,7 +21,7 @@ type tripType = {
 
 export const TheTripMobile = (props: tripType) => {
   return (
-    <DivTripContainer>
+    <LinkTripContainer href={`trip/${props.id}`}>
       <DivHeader>
         <TheFlag image={props.address.country} imageSize={'20'} />
         <DivCountry>{props.address.country}</DivCountry>
@@ -36,14 +37,15 @@ export const TheTripMobile = (props: tripType) => {
           <Moment format='D MMM YYYY'>{props.endDate}</Moment>
         </DivDate>
       </DivTripBody>
-    </DivTripContainer>
+    </LinkTripContainer>
   );
 };
 
-const DivTripContainer = styled.div({
+const LinkTripContainer = styled.a({
   display: 'flex',
   flexDirection: 'column',
   backgroundColor: theme.primaryGrey,
+  textDecoration: 'none',
   width: '100%',
   padding: '20px',
 });

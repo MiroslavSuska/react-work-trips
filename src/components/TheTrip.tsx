@@ -49,6 +49,14 @@ const LinkTripContainer = styled.a({
   backgroundColor: theme.primaryGrey,
   width: '100%',
   padding: '20px',
+
+  'tripAnimation-appear': {
+    opacity: 0.01,
+  },
+  'tripAnimation-appear.tripAnimation-appear-active': {
+    opacity: 1,
+    transition: 'opacity .5s ease-in',
+  },
 });
 
 const DivFlag = styled.div({});
@@ -92,3 +100,5 @@ const DivAddress = styled.div({
   paddingLeft: '20px',
   color: theme.tertiaryGrey,
 });
+
+const tripAnimation = {};

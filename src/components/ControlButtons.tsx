@@ -1,20 +1,89 @@
+import { TripContext } from '../context/TripContext';
+import { authAxios } from '../API-config/configAPI';
 import { theme } from '../styles/theme';
+import { useContext } from 'react';
+import { useHistory } from 'react-router';
 import styled from 'styled-components';
 
 type Props = {
-  delete: () => void;
-  edit: () => void;
+  tripID: string;
 };
 
 export const ControlButtons = (props: Props) => {
+  const { deleteTrip, setFlashDisplay, setFlashMessage } = useContext(TripContext);
+  const history = useHistory();
+
+  const handleEditTrip = () => {};
+
+  const handleDeleteTrip = async () => {
+    if (window.confirm('Are you sure ?')) {
+      try {
+        const response = await authAxios.delete(`/trip/${props.tripID}`);
+        const data = response.data;
+        setFlashDisplay(true);
+        setFlashMessage('Trip was successfully deleted');
+        //console.log(data);
+      } catch (err) {
+        //console.log(err);
+      }
+      deleteTrip(props.tripID);
+      history.push('/');
+    }
+  };
+
   return (
     <DivButtons>
-      <button onClick={props.edit}>Edit</button>
-      <button onClick={props.delete}>Delete</button>
+      <ButtonEdit onClick={handleEditTrip}>Edit</ButtonEdit>
+      <ButtonDelete onClick={handleDeleteTrip}>Delete</ButtonDelete>
     </DivButtons>
   );
 };
 
 const DivButtons = styled.div({
   paddingTop: '25px',
+  display: 'flex',
+  flexDirection: 'row',
+  justifyContent: 'center',
+});
+
+const ButtonEdit = styled.button({
+  color: theme.secondaryBlack,
+  backgroundColor: theme.buttonColor,
+  width: '150px',
+  borderRadius: '10px',
+  border: 'none',
+  padding: '15px 20px',
+  margin: '20px',
+  fontSize: '14px',
+  fontWeight: 600,
+  cursor: 'pointer',
+  ':hover': {
+    color: theme.secondaryBlack,
+    backgroundColor: theme.buttonHoverColor,
+    transition: 'all 0.3s ease',
+  },
+  '@media all and (max-width:500px)': {
+    width: '100%',
+  },
+});
+
+const ButtonDelete = styled.button({
+  color: theme.secondaryBlack,
+  backgroundColor: theme.buttonRedColor,
+  width: '150px',
+  borderRadius: '10px',
+  border: 'none',
+  padding: '15px 20px',
+  margin: '20px',
+  fontSize: '14px',
+  fontWeight: 600,
+  cursor: 'pointer',
+  ':hover': {
+    color: theme.secondaryBlack,
+    backgroundColor: theme.errorColor,
+    transition: 'all 0.3s ease',
+  },
+  '@media all and (max-width:500px)': {
+    width: '100%',
+  },
 });

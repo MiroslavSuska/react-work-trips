@@ -27,11 +27,16 @@ type ContextProps = {
   tripErrorAPI: any;
   countryErrorAPI: any;
   loadingAPI: boolean;
+  flashMessage: string;
+  flashDisplay: boolean;
   addTrips: (fetchedTrips: tripType[] | tripType) => void;
+  deleteTrip: (tripID: string) => void;
   addCountries: (fetchedCountries: countryType[]) => void;
   setTripErrorAPI: React.Dispatch<any>;
   setCountryErrorAPI: React.Dispatch<any>;
   setLoadingAPI: React.Dispatch<boolean>;
+  setFlashMessage: React.Dispatch<string>;
+  setFlashDisplay: React.Dispatch<boolean>;
 };
 
 export const TripContext = createContext<ContextProps>({} as ContextProps);
@@ -42,6 +47,8 @@ export const TripContextProvider = (props: { children: ReactNode }) => {
   const [tripErrorAPI, setTripErrorAPI] = useState(null as any | string);
   const [countryErrorAPI, setCountryErrorAPI] = useState(null as any | string);
   const [loadingAPI, setLoadingAPI] = useState(false);
+  const [flashMessage, setFlashMessage] = useState('');
+  const [flashDisplay, setFlashDisplay] = useState(false);
 
   // add trips from API on page load, or one trip from form to context
   const addTrips = (fetchedTrips: tripType[] | tripType) => {
@@ -54,6 +61,11 @@ export const TripContextProvider = (props: { children: ReactNode }) => {
         return [...prev, fetchedTrips];
       });
     }
+  };
+
+  // delete trip from context
+  const deleteTrip = (tripID: string) => {
+    setTrips(prev => prev.filter(trip => trip.id !== tripID));
   };
 
   // add countries from API to context
@@ -69,7 +81,12 @@ export const TripContextProvider = (props: { children: ReactNode }) => {
     tripErrorAPI,
     countryErrorAPI,
     loadingAPI,
+    flashDisplay,
+    flashMessage,
+    setFlashMessage,
+    setFlashDisplay,
     addTrips,
+    deleteTrip,
     addCountries,
     setTripErrorAPI,
     setCountryErrorAPI,

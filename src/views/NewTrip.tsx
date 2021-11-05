@@ -9,7 +9,7 @@ import { useHistory } from 'react-router-dom';
 import chevronUp from '../images/chevron-up.png';
 import styled from 'styled-components';
 
-type trip = {
+type tripType = {
   id: undefined | string;
   start_date: string;
   end_date: string;
@@ -25,8 +25,22 @@ type trip = {
   covid_test_date: undefined | string;
 };
 
+type errors = {
+  country: boolean;
+  startDate: boolean;
+  endDate: boolean;
+  properDates: boolean;
+  company: boolean;
+  city: boolean;
+  street: boolean;
+  zip: boolean;
+  covid: boolean;
+  covidDate: boolean;
+};
+
 export const NewTrip = () => {
-  const { addTrips, countries, countryErrorAPI } = useContext(TripContext);
+  const { addTrips, countries, countryErrorAPI, setFlashDisplay, setFlashMessage } =
+    useContext(TripContext);
   const [country, setCountry] = useState<string>('');
   const [startDate, setStartDate] = useState<string>('');
   const [endDate, setEndDate] = useState<string>('');
@@ -37,14 +51,19 @@ export const NewTrip = () => {
   const [zipCode, setZipCode] = useState<string>('');
   const [covidStatus, setCovidStatus] = useState('');
   const [covidDate, setCovidDate] = useState<string>('');
-  const [errorStartDate, setErrorStartDate] = useState(false);
-  const [errorEndDate, setErrorEndDate] = useState(false);
-  const [errorProperDate, setErrorProperDate] = useState(false);
-  const [errorCompany, setErrorCompany] = useState(false);
-  const [errorCountry, setErrorCountry] = useState(false);
-  const [errorZip, setErrorZip] = useState(false);
-  const [errorCovid, setErrorCovid] = useState(false);
   const [createTripError, setCreateTripError] = useState<any>();
+  const [errors, setErrors] = useState<errors>({
+    country: false,
+    startDate: false,
+    endDate: false,
+    properDates: false,
+    company: false,
+    city: false,
+    street: false,
+    zip: false,
+    covid: false,
+    covidDate: false,
+  });
   const history = useHistory();
 
   const handleCountry = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -109,27 +128,93 @@ export const NewTrip = () => {
 
   // reset all errors
   const clearErrors = () => {
-    setErrorStartDate(false);
-    setErrorEndDate(false);
-    setErrorCompany(false);
-    setErrorCountry(false);
-    setErrorZip(false);
-    setErrorCovid(false);
-    setErrorProperDate(false);
+    // setErrorStartDate(false);
+    // setErrorEndDate(false);
+    // setErrorCompany(false);
+    // setErrorCountry(false);
+    // setErrorZip(false);
+    // setErrorCovid(false);
+    // setErrorProperDate(false);
     setCreateTripError('');
+    setErrors({
+      country: false,
+      startDate: false,
+      endDate: false,
+      properDates: false,
+      company: false,
+      city: false,
+      street: false,
+      zip: false,
+      covid: false,
+      covidDate: false,
+    });
   };
 
   // check for right inputs and reset errors
   const checkErrors = () => {
-    if (startDate !== '') setErrorStartDate(false);
-    if (endDate !== '') setErrorEndDate(false);
+    //if (startDate !== '') setErrorStartDate(false);
+    //if (endDate !== '') setErrorEndDate(false);
+    //if (company !== '') setErrorCompany(false);
+    //if (country !== '') setErrorCountry(false);
+    //if (zipCode !== '') setErrorZip(false);
+    //if (covidStatus !== '') setErrorCovid(false);
     if (dateIsValid()) {
-      setErrorProperDate(false);
-    } else setErrorProperDate(true);
-    if (company !== '') setErrorCompany(false);
-    if (country !== '') setErrorCountry(false);
-    if (zipCode !== '') setErrorZip(false);
-    if (covidStatus !== '') setErrorCovid(false);
+      //setErrorProperDate(false);
+      setErrors(prevState => ({
+        ...prevState,
+        properDates: false,
+      }));
+    } else
+      setErrors(prevState => ({
+        ...prevState,
+        properDates: true,
+      }));
+    if (startDate !== '')
+      setErrors(prevState => ({
+        ...prevState,
+        startDate: false,
+      }));
+    if (endDate !== '')
+      setErrors(prevState => ({
+        ...prevState,
+        endDate: false,
+      }));
+    if (country !== '')
+      setErrors(prevState => ({
+        ...prevState,
+        country: false,
+      }));
+    if (company !== '')
+      setErrors(prevState => ({
+        ...prevState,
+        company: false,
+      }));
+    if (city !== '')
+      setErrors(prevState => ({
+        ...prevState,
+        city: false,
+      }));
+    if (street !== '')
+      setErrors(prevState => ({
+        ...prevState,
+        street: false,
+      }));
+    if (zipCode !== '')
+      setErrors(prevState => ({
+        ...prevState,
+        zip: false,
+      }));
+    if (covidStatus !== '')
+      setErrors(prevState => ({
+        ...prevState,
+        covid: false,
+      }));
+
+    if (covidStatus !== '' && covidDate !== '')
+      setErrors(prevState => ({
+        ...prevState,
+        covidDate: false,
+      }));
   };
 
   // validate if start date is before or same as end date
@@ -141,30 +226,109 @@ export const NewTrip = () => {
     } else return false;
   };
 
-  // validate if inputs are fulfilled and if not, set error
-  const validate = () => {
-    if (startDate && endDate && company && country && zipCode && covidStatus && dateIsValid()) {
+  // check covid status and covid date
+  const isCovidStatusValid = () => {
+    if (!covidStatus) return false;
+    else if (covidStatus === 'no') {
+      return true;
+    } else if (covidStatus === 'yes' && !covidDate) {
+      return false;
+    } else if (covidStatus === 'yes' && covidDate) {
       return true;
     }
-    if (startDate === '') setErrorStartDate(true);
-    if (endDate === '') setErrorEndDate(true);
-    if (!dateIsValid()) setErrorProperDate(true);
-    if (company === '') setErrorCompany(true);
-    if (country === '') setErrorCountry(true);
-    if (zipCode === '') setErrorZip(true);
-    if (covidStatus === '') setErrorCovid(true);
+  };
 
+  // set error states
+  const setErrorStatuses = () => {
+    //if (startDate === '') setErrorStartDate(true);
+    if (startDate === '')
+      setErrors(prevState => ({
+        ...prevState,
+        startDate: true,
+      }));
+    //if (endDate === '') setErrorEndDate(true);
+    if (endDate === '')
+      setErrors(prevState => ({
+        ...prevState,
+        endDate: true,
+      }));
+    if (!dateIsValid())
+      setErrors(prevState => ({
+        ...prevState,
+        properDates: true,
+      }));
+    //if (company === '') setErrorCompany(true);
+    if (company === '')
+      setErrors(prevState => ({
+        ...prevState,
+        company: true,
+      }));
+    //if (country === '') setErrorCountry(true);
+    if (country === '')
+      setErrors(prevState => ({
+        ...prevState,
+        country: true,
+      }));
+    if (city === '')
+      setErrors(prevState => ({
+        ...prevState,
+        city: true,
+      }));
+    if (street === '')
+      setErrors(prevState => ({
+        ...prevState,
+        street: true,
+      }));
+    //if (zipCode === '') setErrorZip(true);
+    if (zipCode === '')
+      setErrors(prevState => ({
+        ...prevState,
+        zip: true,
+      }));
+    //if (covidStatus === '') setErrorCovid(true);
+    if (covidStatus === '') {
+      setErrors(prevState => ({
+        ...prevState,
+        covid: true,
+      }));
+    } else if (covidStatus === 'yes' && covidDate === '') {
+      setErrors(prevState => ({
+        ...prevState,
+        covidDate: true,
+      }));
+    }
+  };
+
+  // validate if inputs are fulfilled and if not, set error
+  const validate = () => {
+    if (
+      startDate &&
+      endDate &&
+      company &&
+      country &&
+      city &&
+      street &&
+      zipCode &&
+      isCovidStatusValid() &&
+      dateIsValid()
+    ) {
+      return true;
+    }
+
+    setErrorStatuses();
     return false;
   };
 
   // create axios post request
-  const createTrip = async (newTrip: trip) => {
+  const createTrip = async (newTrip: tripType) => {
     try {
       const response = await authAxios.post('/trip', newTrip);
       const data = response.data;
-      console.log(data.id);
+      //console.log(data.id);
       newTrip.id = data.id;
       addTrips(newTrip);
+      setFlashDisplay(true);
+      setFlashMessage('Trip was successfully added');
     } catch (err) {
       setCreateTripError(err);
     }
@@ -194,7 +358,7 @@ export const NewTrip = () => {
       createTrip(newTrip);
       clearInputs();
       clearErrors();
-      history.push('/all-trips');
+      history.push('/');
     }
     checkErrors();
   };
@@ -215,7 +379,7 @@ export const NewTrip = () => {
                   onChange={handleCountry}
                   value={country}
                   style={{
-                    borderColor: errorCountry ? theme.errorColor : theme.borderColor,
+                    borderColor: errors.country ? theme.errorColor : theme.borderColor,
                     color: country ? theme.primaryBlack : theme.placeholderColor,
                   }}
                 >
@@ -228,7 +392,7 @@ export const NewTrip = () => {
                 </Select>
               </DivSelectWrapper>
               {countryErrorAPI && <ErrorAPI errorText={countryErrorAPI} />}
-              {errorCountry && <DivAlert>Please pick a country</DivAlert>}
+              {errors.country && <DivAlert>Please pick a country</DivAlert>}
             </DivFormBox>
 
             <DivFormBox>
@@ -241,10 +405,10 @@ export const NewTrip = () => {
                 className={startDate ? 'date-input--has-value' : ''}
                 style={{
                   borderColor:
-                    errorStartDate || errorProperDate ? theme.errorColor : theme.borderColor,
+                    errors.startDate || errors.properDates ? theme.errorColor : theme.borderColor,
                 }}
               />
-              {errorStartDate && <DivAlert>Please pick a start date</DivAlert>}
+              {errors.startDate && <DivAlert>Please pick a start date</DivAlert>}
 
               <h5>End date</h5>
               <InputText
@@ -255,11 +419,11 @@ export const NewTrip = () => {
                 className={endDate ? 'date-input--has-value' : ''}
                 style={{
                   borderColor:
-                    errorEndDate || errorProperDate ? theme.errorColor : theme.borderColor,
+                    errors.endDate || errors.properDates ? theme.errorColor : theme.borderColor,
                 }}
               />
-              {errorStartDate && <DivAlert>Please pick the end date</DivAlert>}
-              {errorProperDate && (
+              {errors.endDate && <DivAlert>Please pick the end date</DivAlert>}
+              {errors.properDates && (
                 <DivAlert>
                   Please make sure you choose start date before or same day as end date
                 </DivAlert>
@@ -273,9 +437,9 @@ export const NewTrip = () => {
                 placeholder='Type here ...'
                 onChange={handleCompany}
                 value={company}
-                style={{ borderColor: errorCompany ? theme.errorColor : theme.borderColor }}
+                style={{ borderColor: errors.company ? theme.errorColor : theme.borderColor }}
               />
-              {errorCompany && <DivAlert>Please type a company</DivAlert>}
+              {errors.company && <DivAlert>Please type a company</DivAlert>}
 
               <h5>City</h5>
               <InputText
@@ -283,7 +447,9 @@ export const NewTrip = () => {
                 placeholder='Type here ...'
                 onChange={handleCity}
                 value={city}
+                style={{ borderColor: errors.city ? theme.errorColor : theme.borderColor }}
               />
+              {errors.city && <DivAlert>Please type a city</DivAlert>}
 
               <h5>Street</h5>
               <InputText
@@ -291,11 +457,13 @@ export const NewTrip = () => {
                 placeholder='Type here ...'
                 onChange={handleStreet}
                 value={street}
+                style={{ borderColor: errors.street ? theme.errorColor : theme.borderColor }}
               />
+              {errors.street && <DivAlert>Please type a street</DivAlert>}
 
               <h5>Street number</h5>
               <InputText
-                type='text'
+                type='number'
                 placeholder='Type here ...'
                 onChange={handleStreetNumber}
                 value={streetNumber}
@@ -303,13 +471,13 @@ export const NewTrip = () => {
 
               <h5>Zip code</h5>
               <InputText
-                type='text'
+                type='number'
                 placeholder='Type here ...'
                 onChange={handleZipCode}
                 value={zipCode}
-                style={{ borderColor: errorZip ? theme.errorColor : theme.borderColor }}
+                style={{ borderColor: errors.zip ? theme.errorColor : theme.borderColor }}
               />
-              {errorZip && <DivAlert>Please type a zip code</DivAlert>}
+              {errors.zip && <DivAlert>Please type a zip code</DivAlert>}
             </DivFormBox>
 
             <DivFormBox>
@@ -340,7 +508,7 @@ export const NewTrip = () => {
                 />
                 <label htmlFor='covid-no'>No</label>
               </DivRadio>
-              {errorCovid && (
+              {errors.covid && (
                 <DivAlert>Please choose if you have been tested for COVID-19</DivAlert>
               )}
 
@@ -353,7 +521,11 @@ export const NewTrip = () => {
                     onChange={handleCovidDate}
                     value={covidDate}
                     className={covidDate ? 'date-input--has-value' : ''}
+                    style={{ borderColor: errors.covidDate ? theme.errorColor : theme.borderColor }}
                   />
+                  {errors.covidDate && (
+                    <DivAlert>Please choose the date you have been tested for COVID-19</DivAlert>
+                  )}
                 </DivTestDate>
               ) : (
                 <div />

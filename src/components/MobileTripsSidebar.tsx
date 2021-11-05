@@ -15,6 +15,7 @@ export const MobileTripsSidebar = () => {
           {trips.map((trip, index) => (
             <Li key={index}>
               <TheTripMobile
+                id={trip.id}
                 company={trip.company_name}
                 startDate={trip.start_date}
                 endDate={trip.end_date}

@@ -14,7 +14,7 @@ import flagSweden from '../images/flag_sweden.png';
 import styled from 'styled-components';
 
 type Props = {
-  image: string;
+  image: string | undefined;
   imageSize: string;
 };
 

@@ -1,6 +1,7 @@
 import { AiOutlinePlus } from 'react-icons/ai';
 import { BsClock } from 'react-icons/bs';
 import { FaBars } from 'react-icons/fa';
+import { FlashMessage } from '../components/FlashMessage';
 import { Link, Route, BrowserRouter as Router, Switch } from 'react-router-dom';
 import { NewTrip } from '../views/NewTrip';
 import { TheTripDetail } from '../views/TheTripDetail';
@@ -99,23 +100,33 @@ export const Navigation = () => {
 
         <DivContent style={{ display: mobileNavbar ? 'none' : 'block' }}>
           <Switch>
-            {/* {trips.map(trip => (
-              <Route path={`/trip/:id`} key={trip.id}>
-                <TheTripDetail />
-              </Route>
-            ))} */}
-            <Route path={`/trip/:id`}>
+            <Route exact path={`/trip/:tripID`}>
               <TheTripDetail />
             </Route>
-            <Route path='/new-trip'>
+            <Route exact path='/new-trip'>
               <NewTrip />
             </Route>
-            <Route path='/'>
+            {/* {trips.map(trip => (
+              <Route exact path={`/trip/:tripID`} key={trip.id}>
+                <TheTripDetail
+                  id={trip.id}
+                  company={trip.company_name}
+                  startDate={trip.start_date}
+                  endDate={trip.end_date}
+                  address={trip.address}
+                  covid={trip.covid}
+                  covidDate={trip.covid_test_date}
+                />
+              </Route>
+            ))} */}
+            <Route exact path='/'>
               <WorkTrips />
             </Route>
           </Switch>
         </DivContent>
       </Router>
+
+      <FlashMessage />
     </DivContainer>
   );
 };
