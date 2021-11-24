@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { TheFlag } from './TheFlag';
 import { theme } from '../styles/theme';
 import Moment from 'react-moment';
@@ -21,7 +22,7 @@ type tripType = {
 
 export const TheTripMobile = (props: tripType) => {
   return (
-    <LinkTripContainer href={`trip/${props.id}`}>
+    <LinkTripContainer to={`trip/${props.id}`}>
       <DivHeader>
         <TheFlag image={props.address.country} imageSize={'20'} />
         <DivCountry>{props.address.country}</DivCountry>
@@ -41,7 +42,7 @@ export const TheTripMobile = (props: tripType) => {
   );
 };
 
-const LinkTripContainer = styled.a({
+const LinkTripContainer = styled(Link)({
   display: 'flex',
   flexDirection: 'column',
   backgroundColor: theme.primaryGrey,

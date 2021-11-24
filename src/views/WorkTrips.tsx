@@ -1,4 +1,4 @@
-import { CSSTransition, TransitionGroup } from 'react-transition-group';
+import '../styles/animations.css';
 import { ErrorAPI } from '../components/ErrorAPI';
 import { Loading } from '../components/Loading';
 import { TheTrip } from '../components/TheTrip';
@@ -7,6 +7,7 @@ import { TipAndTrickSidebar } from '../components/TipAndTrickSidebar';
 import { TripContext } from '../context/TripContext';
 import { theme } from '../styles/theme';
 import { useContext } from 'react';
+import TransitionGroup from 'react-transition-group/TransitionGroup';
 import styled from 'styled-components';
 
 export const WorkTrips = () => {
@@ -22,27 +23,31 @@ export const WorkTrips = () => {
 
           {/* Trips for large screen */}
 
-          {trips.length > 0 ? (
-            trips.map((trip, index) => (
-              <Li key={index}>
-                <TheTrip
-                  id={trip.id}
-                  company={trip.company_name}
-                  startDate={trip.start_date}
-                  endDate={trip.end_date}
-                  address={trip.address}
-                  covid={trip.covid}
-                  covidDate={trip.covid_test_date}
-                />
-              </Li>
-            ))
-          ) : (
+          {!loadingAPI && trips.length === 0 ? (
             <h2>No trips yet</h2>
+          ) : (
+            <TransitionGroup component='ul' className='trip'>
+              {trips.map((trip, index) => (
+                <Li key={index}>
+                  <TheTrip
+                    id={trip.id}
+                    company={trip.company_name}
+                    startDate={trip.start_date}
+                    endDate={trip.end_date}
+                    address={trip.address}
+                    covid={trip.covid}
+                    covidDate={trip.covid_test_date}
+                  />
+                </Li>
+              ))}
+            </TransitionGroup>
           )}
 
-          {/* Trips for large screen */}
+          {/* Trips for small screen */}
           <UlMobileScreen>
-            {trips.length > 0 ? (
+            {!loadingAPI && trips.length === 0 ? (
+              <h2>No trips yet</h2>
+            ) : (
               trips.map((trip, index) => (
                 <Li key={index}>
                   <TheTripMobile
@@ -56,8 +61,6 @@ export const WorkTrips = () => {
                   />
                 </Li>
               ))
-            ) : (
-              <h2>No trips yet</h2>
             )}
           </UlMobileScreen>
         </div>

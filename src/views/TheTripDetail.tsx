@@ -3,7 +3,7 @@ import { TheFlag } from '../components/TheFlag';
 import { TipAndTrickSidebar } from '../components/TipAndTrickSidebar';
 import { TripContext } from '../context/TripContext';
 import { theme } from '../styles/theme';
-import { useContext } from 'react';
+import { useContext, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import Moment from 'react-moment';
 import styled from 'styled-components';
@@ -34,6 +34,10 @@ export const TheTripDetail = () => {
   const { tripID } = useParams<TripRouteParams>();
   const trip = trips.find(trip => trip.id === tripID);
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   return (
     <DivContainer>
       <DivTrip>
@@ -47,25 +51,28 @@ export const TheTripDetail = () => {
           <DivTripBody>
             <DivWrap>
               <span>Company</span>
-              <DivCompany>{trip?.company_name}</DivCompany>
+              <DivTripInfo>{trip?.company_name}</DivTripInfo>
+            </DivWrap>
+
+            <DivWrap>
+              <span>City</span>
+              <DivTripInfo>{trip?.address.city}</DivTripInfo>
             </DivWrap>
 
             <DivWrap>
               <span>Address</span>
-
-              <DivAddress>{trip?.address.city}</DivAddress>
-              <DivAddress>{trip?.address.street}</DivAddress>
-              <DivAddress>{trip?.address.street_num}</DivAddress>
-              <DivAddress>{trip?.address.zip}</DivAddress>
+              <DivTripInfo>{trip?.address.street}</DivTripInfo>
+              <DivTripInfo>{trip?.address.street_num}</DivTripInfo>
+              <DivTripInfo>{trip?.address.zip}</DivTripInfo>
             </DivWrap>
 
             <DivWrap>
               <span>Date</span>
-              <DivDate>
+              <DivTripInfo>
                 {' '}
                 <Moment format='D MMM YYYY'>{trip?.start_date}</Moment> -{' '}
                 <Moment format='D MMM YYYY'>{trip?.end_date}</Moment>
-              </DivDate>
+              </DivTripInfo>
             </DivWrap>
           </DivTripBody>
         </DivTripDetail>
@@ -139,29 +146,10 @@ const DivTripBody = styled.div({
   flexDirection: 'column',
   alignItems: 'start',
 });
-const DivDate = styled.div({
+
+const DivTripInfo = styled.div({
   fontWeight: 'normal',
   fontSize: '14px',
   color: theme.primaryBlack,
   textAlign: 'left',
-});
-
-const DivCompany = styled.div({
-  fontWeight: 'normal',
-  fontSize: '16px',
-  color: theme.secondaryBlack,
-});
-
-const DivAddress = styled.div({
-  fontWeight: 'normal',
-  fontSize: '14px',
-  color: theme.primaryBlack,
-  textAlign: 'left',
-});
-
-const span = styled.span({
-  fontWeight: 400,
-  fontSize: '18px',
-  color: theme.tertiaryGrey,
-  marginBottom: '15px',
 });

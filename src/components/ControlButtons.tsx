@@ -33,7 +33,9 @@ export const ControlButtons = (props: Props) => {
 
   return (
     <DivButtons>
-      <ButtonEdit onClick={handleEditTrip}>Edit</ButtonEdit>
+      {/* <ButtonEdit disabled={true} onClick={handleEditTrip}>
+        Edit
+      </ButtonEdit> */}
       <ButtonDelete onClick={handleDeleteTrip}>Delete</ButtonDelete>
     </DivButtons>
   );

@@ -10,7 +10,7 @@ import { WorkTrips } from '../views/WorkTrips';
 import { authAxios } from '../API-config/configAPI';
 import { theme } from '../styles/theme';
 import { useContext, useEffect, useState } from 'react';
-import logo from '../images/cleevio_logo.png';
+import logo from '../images/logo.jpg';
 import styled from 'styled-components';
 
 export const Navigation = () => {
@@ -100,12 +100,13 @@ export const Navigation = () => {
 
         <DivContent style={{ display: mobileNavbar ? 'none' : 'block' }}>
           <Switch>
-            <Route exact path={`/trip/:tripID`}>
-              <TheTripDetail />
-            </Route>
             <Route exact path='/new-trip'>
               <NewTrip />
             </Route>
+            <Route exact path={`/trip/:tripID`}>
+              <TheTripDetail />
+            </Route>
+
             {/* {trips.map(trip => (
               <Route exact path={`/trip/:tripID`} key={trip.id}>
                 <TheTripDetail
@@ -254,9 +255,12 @@ const LinkTrips = styled(Link)({
 
 const LinkBrand = styled.a({
   display: 'block',
-  maxWidth: '100%',
   height: 'auto',
   marginBottom: '40px',
+  img: {
+    width: '100%',
+    maxWidth: '130px',
+  },
 });
 
 const SpanTextButton = styled.span({
