@@ -2,8 +2,10 @@ import { ErrorAPI } from '../components/ErrorAPI';
 import { FiCheck } from 'react-icons/fi';
 import { MobileTripsSidebar } from '../components/MobileTripsSidebar';
 import { TripContext } from '../context/TripContext';
+import { addTripp } from '../features/trips/tripSlice';
 import { authAxios } from '../API-config/configAPI';
 import { theme } from '../styles/theme';
+import { useAppDispatch, useAppSelector } from '../app/hooks';
 import { useContext, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import chevronUp from '../images/chevron-up.png';
@@ -65,6 +67,10 @@ export const NewTrip = () => {
     covidDate: false,
   });
   const history = useHistory();
+
+  const dispatch = useAppDispatch();
+  const countriesRedux = useAppSelector(state => state.countries);
+  //console.log(countriesRedux);
 
   const handleCountry = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setCountry(e.currentTarget.value);
@@ -326,6 +332,9 @@ export const NewTrip = () => {
       const data = response.data;
       //console.log(data.id);
       newTrip.id = data.id;
+
+      dispatch(addTripp(newTrip));
+
       addTrips(newTrip);
       setFlashDisplay(true);
       setFlashMessage('Trip was successfully added');
@@ -384,7 +393,7 @@ export const NewTrip = () => {
                   }}
                 >
                   <option value=''>Select country</option>
-                  {countries.map((country, index) => (
+                  {countriesRedux.map((country, index) => (
                     <Option value={country.label} key={index}>
                       {country.label}
                     </Option>

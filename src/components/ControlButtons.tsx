@@ -1,6 +1,8 @@
 import { TripContext } from '../context/TripContext';
 import { authAxios } from '../API-config/configAPI';
+import { removeTrip } from '../features/trips/tripSlice';
 import { theme } from '../styles/theme';
+import { useAppDispatch, useAppSelector } from '../app/hooks';
 import { useContext } from 'react';
 import { useHistory } from 'react-router';
 import styled from 'styled-components';
@@ -12,6 +14,8 @@ type Props = {
 export const ControlButtons = (props: Props) => {
   const { deleteTrip, setFlashDisplay, setFlashMessage } = useContext(TripContext);
   const history = useHistory();
+  const dispatch = useAppDispatch();
+  const countriesRedux = useAppSelector(state => state.countries);
 
   const handleEditTrip = () => {};
 
@@ -20,14 +24,16 @@ export const ControlButtons = (props: Props) => {
       try {
         const response = await authAxios.delete(`/trip/${props.tripID}`);
         const data = response.data;
+
+        dispatch(removeTrip(props.tripID));
+        deleteTrip(props.tripID);
+        history.push('/');
         setFlashDisplay(true);
         setFlashMessage('Trip was successfully deleted');
         //console.log(data);
       } catch (err) {
         //console.log(err);
       }
-      deleteTrip(props.tripID);
-      history.push('/');
     }
   };
 

@@ -6,12 +6,14 @@ import { TheTripMobile } from '../components/TheTripMobile';
 import { TipAndTrickSidebar } from '../components/TipAndTrickSidebar';
 import { TripContext } from '../context/TripContext';
 import { theme } from '../styles/theme';
+import { useAppSelector } from '../app/hooks';
 import { useContext } from 'react';
 import TransitionGroup from 'react-transition-group/TransitionGroup';
 import styled from 'styled-components';
 
 export const WorkTrips = () => {
   const { trips, tripErrorAPI, loadingAPI } = useContext(TripContext);
+  const tripsRedux = useAppSelector(state => state.trips);
 
   return (
     <DivContainer>
@@ -23,11 +25,11 @@ export const WorkTrips = () => {
 
           {/* Trips for large screen */}
 
-          {!loadingAPI && trips.length === 0 ? (
+          {!loadingAPI && tripsRedux.length === 0 ? (
             <h2>No trips yet</h2>
           ) : (
             <TransitionGroup component='ul' className='trip'>
-              {trips.map((trip, index) => (
+              {tripsRedux.map((trip, index) => (
                 <Li key={index}>
                   <TheTrip
                     id={trip.id}
@@ -45,10 +47,10 @@ export const WorkTrips = () => {
 
           {/* Trips for small screen */}
           <UlMobileScreen>
-            {!loadingAPI && trips.length === 0 ? (
+            {!loadingAPI && tripsRedux.length === 0 ? (
               <h2>No trips yet</h2>
             ) : (
-              trips.map((trip, index) => (
+              tripsRedux.map((trip, index) => (
                 <Li key={index}>
                   <TheTripMobile
                     id={trip.id}

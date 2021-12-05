@@ -7,8 +7,11 @@ import { NewTrip } from '../views/NewTrip';
 import { TheTripDetail } from '../views/TheTripDetail';
 import { TripContext } from '../context/TripContext';
 import { WorkTrips } from '../views/WorkTrips';
+import { addCountriess } from '../features/countries/countrySlice';
+import { addTripss } from '../features/trips/tripSlice';
 import { authAxios } from '../API-config/configAPI';
 import { theme } from '../styles/theme';
+import { useAppDispatch, useAppSelector } from '../app/hooks';
 import { useContext, useEffect, useState } from 'react';
 import logo from '../images/logo.jpg';
 import styled from 'styled-components';
@@ -19,6 +22,8 @@ export const Navigation = () => {
   const { trips, addTrips, addCountries, setTripErrorAPI, setCountryErrorAPI, setLoadingAPI } =
     useContext(TripContext);
 
+  const dispatch = useAppDispatch();
+
   // Fetch data
   useEffect(() => {
     const fetchTripData = async () => {
@@ -26,6 +31,7 @@ export const Navigation = () => {
       try {
         const response = await authAxios.get('trip');
         const fetchedTrips = response.data;
+        dispatch(addTripss(fetchedTrips));
         addTrips(fetchedTrips);
       } catch (err) {
         setTripErrorAPI(err);
@@ -39,6 +45,8 @@ export const Navigation = () => {
         const response = await authAxios.get('country');
         const fetchedCountries = response.data;
         addCountries(fetchedCountries);
+
+        dispatch(addCountriess(fetchedCountries));
       } catch (err) {
         setCountryErrorAPI(err);
         //console.log(err);
@@ -70,72 +78,59 @@ export const Navigation = () => {
   };
 
   return (
-    <DivContainer>
-      <Router>
-        <ButtonBurger onClick={handleNavButton}>
-          <FaBarStyled />
-        </ButtonBurger>
-        <NavStyled
-          style={{
-            top: mobileNavbar ? '0' : !mobileNavbar && windowSize > 750 ? '0' : '-100vh',
-          }}
-        >
-          <LinkBrand href='/'>
-            <img src={logo} alt='logo' />
-          </LinkBrand>
+    <DivNavContainer>
+      <ButtonBurger onClick={handleNavButton}>
+        <FaBarStyled />
+      </ButtonBurger>
 
-          <UlNavigation>
-            <Li>
-              <LinkNewTrip to='/new-trip' onClick={handleNavButton}>
-                New trip <AiOutlinePlus />
-              </LinkNewTrip>
-            </Li>
-            <Li>
-              <LinkTrips to='/' onClick={handleNavButton}>
-                <BsClock /> <SpanTextButton>Your Trips</SpanTextButton>
-              </LinkTrips>
-            </Li>
-          </UlNavigation>
-        </NavStyled>
+      <NavStyled
+        style={{
+          top: mobileNavbar ? '0' : !mobileNavbar && windowSize > 750 ? '0' : '-100vh',
+        }}
+      >
+        <LinkBrand href='/'>
+          <img src={logo} alt='logo' />
+        </LinkBrand>
 
-        <DivContent style={{ display: mobileNavbar ? 'none' : 'block' }}>
-          <Switch>
-            <Route exact path='/new-trip'>
-              <NewTrip />
-            </Route>
-            <Route exact path={`/trip/:tripID`}>
-              <TheTripDetail />
-            </Route>
+        <UlNavigation>
+          <Li>
+            <LinkNewTrip to='/new-trip' onClick={handleNavButton}>
+              New trip <AiOutlinePlus />
+            </LinkNewTrip>
+          </Li>
+          <Li>
+            <LinkTrips to='/' onClick={handleNavButton}>
+              <BsClock /> <SpanTextButton>Your Trips</SpanTextButton>
+            </LinkTrips>
+          </Li>
+        </UlNavigation>
+      </NavStyled>
 
-            {/* {trips.map(trip => (
-              <Route exact path={`/trip/:tripID`} key={trip.id}>
-                <TheTripDetail
-                  id={trip.id}
-                  company={trip.company_name}
-                  startDate={trip.start_date}
-                  endDate={trip.end_date}
-                  address={trip.address}
-                  covid={trip.covid}
-                  covidDate={trip.covid_test_date}
-                />
-              </Route>
-            ))} */}
-            <Route exact path='/'>
-              <WorkTrips />
-            </Route>
-          </Switch>
-        </DivContent>
-      </Router>
+      {/* <DivContent style={{ display: mobileNavbar ? 'none' : 'block' }}>
+        <Switch>
+          <Route exact path='/new-trip'>
+            <NewTrip />
+          </Route>
+          <Route exact path={`/trip/:tripID`}>
+            <TheTripDetail />
+          </Route>
+          <Route exact path='/'>
+            <WorkTrips />
+          </Route>
+        </Switch>
+      </DivContent> */}
 
       <FlashMessage />
-    </DivContainer>
+    </DivNavContainer>
   );
 };
 
-const DivContainer = styled.div({
-  display: 'flex',
+const DivNavContainer = styled.div({
+  display: 'fixed',
   flexDirection: 'row',
   position: 'relative',
+  left: 0,
+  height: '100vh',
 });
 
 const DivContent = styled.div({
@@ -176,11 +171,11 @@ const FaBarStyled = styled(FaBars)({
 });
 
 const NavStyled = styled.nav({
-  position: 'fixed',
-  left: 0,
-  top: 0,
-  height: '100%',
-  maxWidth: '240px',
+  //position: 'fixed',
+  //left: 0,
+  //top: 0,
+  //height: '100%',
+  //maxWidth: '240px',
   width: '100%',
   backgroundColor: `${theme.primaryGrey}`,
   transition: 'all 0.3s ease',
