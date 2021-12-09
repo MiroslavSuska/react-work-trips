@@ -29,7 +29,7 @@ type TripRouteParams = {
   tripID: string;
 };
 
-export const TheTripDetail = () => {
+export const TripDetail = () => {
   const { trips } = useContext(TripContext);
   const { tripID } = useParams<TripRouteParams>();
   const trip = trips.find(trip => trip.id === tripID);

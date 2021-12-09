@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { TripContext } from '../context/TripContext';
 import { authAxios } from '../API-config/configAPI';
 import { removeTrip } from '../features/trips/tripSlice';
@@ -39,9 +40,7 @@ export const ControlButtons = (props: Props) => {
 
   return (
     <DivButtons>
-      {/* <ButtonEdit disabled={true} onClick={handleEditTrip}>
-        Edit
-      </ButtonEdit> */}
+      <ButtonEdit to={`/trips/edit/${props.tripID}`}>Edit</ButtonEdit>
       <ButtonDelete onClick={handleDeleteTrip}>Delete</ButtonDelete>
     </DivButtons>
   );
@@ -54,7 +53,7 @@ const DivButtons = styled.div({
   justifyContent: 'center',
 });
 
-const ButtonEdit = styled.button({
+const ButtonEdit = styled(Link)({
   color: theme.secondaryBlack,
   backgroundColor: theme.buttonColor,
   width: '150px',
@@ -65,6 +64,7 @@ const ButtonEdit = styled.button({
   fontSize: '14px',
   fontWeight: 600,
   cursor: 'pointer',
+  textDecoration: 'none',
   ':hover': {
     color: theme.secondaryBlack,
     backgroundColor: theme.buttonHoverColor,

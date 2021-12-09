@@ -3,10 +3,7 @@ import { BsClock } from 'react-icons/bs';
 import { FaBars } from 'react-icons/fa';
 import { FlashMessage } from '../components/FlashMessage';
 import { Link, Route, BrowserRouter as Router, Switch } from 'react-router-dom';
-import { NewTrip } from '../views/NewTrip';
-import { TheTripDetail } from '../views/TheTripDetail';
 import { TripContext } from '../context/TripContext';
-import { WorkTrips } from '../views/WorkTrips';
 import { addCountriess } from '../features/countries/countrySlice';
 import { addTripss } from '../features/trips/tripSlice';
 import { authAxios } from '../API-config/configAPI';
@@ -94,7 +91,7 @@ export const Navigation = () => {
 
         <UlNavigation>
           <Li>
-            <LinkNewTrip to='/new-trip' onClick={handleNavButton}>
+            <LinkNewTrip to='/trips/new/create' onClick={handleNavButton}>
               New trip <AiOutlinePlus />
             </LinkNewTrip>
           </Li>

@@ -1,10 +1,11 @@
 //import { DivBody } from './styles/GlobalStyle';
-import { Link, Route, Switch } from 'react-router-dom';
 import { Navigation } from './router/Navigation';
-import { NewTrip } from './views/NewTrip';
-import { TheTripDetail } from './views/TheTripDetail';
+import { Route, Switch } from 'react-router-dom';
 import { TripContextProvider } from './context/TripContext';
-import { WorkTrips } from './views/WorkTrips';
+import { TripCreate } from './views/TripCreate';
+import { TripDetail } from './views/TripDetail';
+import { TripEdit } from './views/TripEdit';
+import { Trips } from './views/Trips';
 import { theme } from './styles/theme';
 import styled from 'styled-components';
 
@@ -18,14 +19,17 @@ export default function App() {
 
         <DivMain>
           <Switch>
-            <Route exact path='/new-trip'>
-              <NewTrip />
+            <Route exact path='/trips/new/create'>
+              <TripCreate />
             </Route>
-            <Route exact path={`/trip/:tripID`}>
-              <TheTripDetail />
+            <Route exact path='/trips/edit/:tripID'>
+              <TripEdit />
+            </Route>
+            <Route exact path={`/trips/:tripID`}>
+              <TripDetail />
             </Route>
             <Route exact path='/'>
-              <WorkTrips />
+              <Trips />
             </Route>
           </Switch>
         </DivMain>

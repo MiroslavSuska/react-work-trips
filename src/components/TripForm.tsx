@@ -1,13 +1,12 @@
-import { ErrorAPI } from '../components/ErrorAPI';
+import { ErrorAPI } from './ErrorAPI';
 import { FiCheck } from 'react-icons/fi';
-import { MobileTripsSidebar } from '../components/MobileTripsSidebar';
 import { TripContext } from '../context/TripContext';
 import { addTripp } from '../features/trips/tripSlice';
 import { authAxios } from '../API-config/configAPI';
 import { theme } from '../styles/theme';
 import { useAppDispatch, useAppSelector } from '../app/hooks';
-import { useContext, useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useContext, useEffect, useState } from 'react';
+import { useHistory, useParams } from 'react-router-dom';
 import chevronUp from '../images/chevron-up.png';
 import styled from 'styled-components';
 
@@ -40,7 +39,16 @@ type errors = {
   covidDate: boolean;
 };
 
-export const NewTrip = () => {
+type Props = {
+  tripEditing?: boolean;
+};
+
+type TripRouteParams = {
+  editTrip: string;
+  tripID: string;
+};
+
+export const TripForm = (props: Props) => {
   const { addTrips, countries, countryErrorAPI, setFlashDisplay, setFlashMessage } =
     useContext(TripContext);
   const [country, setCountry] = useState<string>('');
@@ -67,50 +75,21 @@ export const NewTrip = () => {
     covidDate: false,
   });
   const history = useHistory();
+  const { tripID } = useParams<TripRouteParams>();
 
   const dispatch = useAppDispatch();
   const countriesRedux = useAppSelector(state => state.countries);
-  //console.log(countriesRedux);
+  const reduxTrips = useAppSelector(state => state.trips);
+  const editedTrip = reduxTrips.find(trip => trip.id === tripID);
+  console.log(editedTrip);
 
-  const handleCountry = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setCountry(e.currentTarget.value);
-  };
+  useEffect(() => {
+    const setDefaultValues = () => {
+      //setCountry(editedTrip?.address.country);
+    };
 
-  const handleStartDate = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setStartDate(e.currentTarget.value);
-  };
-
-  const handleEndDate = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setEndDate(e.currentTarget.value);
-  };
-
-  const handleCompany = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setCompany(e.currentTarget.value);
-  };
-
-  const handleCity = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setCity(e.currentTarget.value);
-  };
-
-  const handleStreet = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setStreet(e.currentTarget.value);
-  };
-
-  const handleStreetNumber = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setStreetNumber(e.currentTarget.value);
-  };
-
-  const handleZipCode = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setZipCode(e.currentTarget.value);
-  };
-
-  const handleCovidStatus = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setCovidStatus(e.currentTarget.value);
-  };
-
-  const handleCovidDate = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setCovidDate(e.currentTarget.value);
-  };
+    setDefaultValues();
+  }, []);
 
   // check the string state of covid status and return boolean
   const covidData = () => {
@@ -370,227 +349,180 @@ export const NewTrip = () => {
       history.push('/');
     }
     checkErrors();
+    //clearErrors();
   };
 
   return (
-    <DivContainer>
-      <DivNewTrip>
-        <H1>New trip</H1>
+    <form onSubmit={handleSubmit}>
+      <DivFormBox>
+        <h5>Where do you want to go</h5>
+        <DivSelectWrapper>
+          <Select
+            name='countries'
+            id='country-select'
+            onChange={e => setCountry(e.currentTarget.value)}
+            // value={props ? editedTrip?.address.country : country}
+            value={country}
+            //defaultValue={editedTrip?.address.country}
+            style={{
+              borderColor: errors.country ? theme.errorColor : theme.borderColor,
+              color: country ? theme.primaryBlack : theme.placeholderColor,
+            }}
+          >
+            <option value=''>Select country</option>
+            {countriesRedux.map((country, index) => (
+              <Option value={country.label} key={index}>
+                {country.label}
+              </Option>
+            ))}
+          </Select>
+        </DivSelectWrapper>
+        {countryErrorAPI && <ErrorAPI errorText={countryErrorAPI} />}
+        {errors.country && <DivAlert>Please pick a country</DivAlert>}
+      </DivFormBox>
 
-        <DivFormWrap>
-          <form onSubmit={handleSubmit}>
-            <DivFormBox>
-              <h5>Where do you want to go</h5>
-              <DivSelectWrapper>
-                <Select
-                  name='countries'
-                  id='country-select'
-                  onChange={handleCountry}
-                  value={country}
-                  style={{
-                    borderColor: errors.country ? theme.errorColor : theme.borderColor,
-                    color: country ? theme.primaryBlack : theme.placeholderColor,
-                  }}
-                >
-                  <option value=''>Select country</option>
-                  {countriesRedux.map((country, index) => (
-                    <Option value={country.label} key={index}>
-                      {country.label}
-                    </Option>
-                  ))}
-                </Select>
-              </DivSelectWrapper>
-              {countryErrorAPI && <ErrorAPI errorText={countryErrorAPI} />}
-              {errors.country && <DivAlert>Please pick a country</DivAlert>}
-            </DivFormBox>
+      <DivFormBox>
+        <h5>Start date</h5>
+        <InputText
+          type='date'
+          placeholder='dd.mm.yy'
+          onChange={e => setStartDate(e.currentTarget.value)}
+          value={props ? editedTrip?.start_date : startDate}
+          className={startDate ? 'date-input--has-value' : ''}
+          style={{
+            borderColor:
+              errors.startDate || errors.properDates ? theme.errorColor : theme.borderColor,
+          }}
+        />
+        {errors.startDate && <DivAlert>Please pick a start date</DivAlert>}
 
-            <DivFormBox>
-              <h5>Start date</h5>
-              <InputText
-                type='date'
-                placeholder='dd.mm.yy'
-                onChange={handleStartDate}
-                value={startDate}
-                className={startDate ? 'date-input--has-value' : ''}
-                style={{
-                  borderColor:
-                    errors.startDate || errors.properDates ? theme.errorColor : theme.borderColor,
-                }}
-              />
-              {errors.startDate && <DivAlert>Please pick a start date</DivAlert>}
+        <h5>End date</h5>
+        <InputText
+          type='date'
+          placeholder='dd.mm.yy'
+          onChange={e => setEndDate(e.currentTarget.value)}
+          value={props ? editedTrip?.end_date : endDate}
+          className={endDate ? 'date-input--has-value' : ''}
+          style={{
+            borderColor:
+              errors.endDate || errors.properDates ? theme.errorColor : theme.borderColor,
+          }}
+        />
+        {errors.endDate && <DivAlert>Please pick the end date</DivAlert>}
+        {errors.properDates && (
+          <DivAlert>Please make sure you choose start date before or same day as end date</DivAlert>
+        )}
+      </DivFormBox>
 
-              <h5>End date</h5>
-              <InputText
-                type='date'
-                placeholder='dd.mm.yy'
-                onChange={handleEndDate}
-                value={endDate}
-                className={endDate ? 'date-input--has-value' : ''}
-                style={{
-                  borderColor:
-                    errors.endDate || errors.properDates ? theme.errorColor : theme.borderColor,
-                }}
-              />
-              {errors.endDate && <DivAlert>Please pick the end date</DivAlert>}
-              {errors.properDates && (
-                <DivAlert>
-                  Please make sure you choose start date before or same day as end date
-                </DivAlert>
-              )}
-            </DivFormBox>
+      <DivFormBox>
+        <h5>Company name</h5>
+        <InputText
+          type='text'
+          placeholder='Type here ...'
+          onChange={e => setCompany(e.currentTarget.value)}
+          value={props ? editedTrip?.company_name : company}
+          style={{ borderColor: errors.company ? theme.errorColor : theme.borderColor }}
+        />
+        {errors.company && <DivAlert>Please type a company</DivAlert>}
 
-            <DivFormBox>
-              <h5>Company name</h5>
-              <InputText
-                type='text'
-                placeholder='Type here ...'
-                onChange={handleCompany}
-                value={company}
-                style={{ borderColor: errors.company ? theme.errorColor : theme.borderColor }}
-              />
-              {errors.company && <DivAlert>Please type a company</DivAlert>}
+        <h5>City</h5>
+        <InputText
+          type='text'
+          placeholder='Type here ...'
+          onChange={e => setCity(e.currentTarget.value)}
+          value={props ? editedTrip?.address.city : city}
+          style={{ borderColor: errors.city ? theme.errorColor : theme.borderColor }}
+        />
+        {errors.city && <DivAlert>Please type a city</DivAlert>}
 
-              <h5>City</h5>
-              <InputText
-                type='text'
-                placeholder='Type here ...'
-                onChange={handleCity}
-                value={city}
-                style={{ borderColor: errors.city ? theme.errorColor : theme.borderColor }}
-              />
-              {errors.city && <DivAlert>Please type a city</DivAlert>}
+        <h5>Street</h5>
+        <InputText
+          type='text'
+          placeholder='Type here ...'
+          onChange={e => setStreet(e.currentTarget.value)}
+          value={props ? editedTrip?.address.street : street}
+          style={{ borderColor: errors.street ? theme.errorColor : theme.borderColor }}
+        />
+        {errors.street && <DivAlert>Please type a street</DivAlert>}
 
-              <h5>Street</h5>
-              <InputText
-                type='text'
-                placeholder='Type here ...'
-                onChange={handleStreet}
-                value={street}
-                style={{ borderColor: errors.street ? theme.errorColor : theme.borderColor }}
-              />
-              {errors.street && <DivAlert>Please type a street</DivAlert>}
+        <h5>Street number</h5>
+        <InputText
+          type='number'
+          placeholder='Type here ...'
+          onChange={e => setStreetNumber(e.currentTarget.value)}
+          value={props ? editedTrip?.address.street_num : streetNumber}
+        />
 
-              <h5>Street number</h5>
-              <InputText
-                type='number'
-                placeholder='Type here ...'
-                onChange={handleStreetNumber}
-                value={streetNumber}
-              />
+        <h5>Zip code</h5>
+        <InputText
+          type='number'
+          placeholder='Type here ...'
+          onChange={e => setZipCode(e.currentTarget.value)}
+          value={props ? editedTrip?.address.zip : zipCode}
+          style={{ borderColor: errors.zip ? theme.errorColor : theme.borderColor }}
+        />
+        {errors.zip && <DivAlert>Please type a zip code</DivAlert>}
+      </DivFormBox>
 
-              <h5>Zip code</h5>
-              <InputText
-                type='number'
-                placeholder='Type here ...'
-                onChange={handleZipCode}
-                value={zipCode}
-                style={{ borderColor: errors.zip ? theme.errorColor : theme.borderColor }}
-              />
-              {errors.zip && <DivAlert>Please type a zip code</DivAlert>}
-            </DivFormBox>
+      <DivFormBox>
+        <h5>
+          Have you been recently tested for <b>COVID-19?</b>
+        </h5>
 
-            <DivFormBox>
-              <h5>
-                Have you been recently tested for <b>COVID-19?</b>
-              </h5>
+        <DivRadio>
+          <input
+            type='radio'
+            id='covid-yes'
+            name='radio-covid'
+            value='yes'
+            onChange={e => setCovidStatus(e.currentTarget.value)}
+            checked={props ? editedTrip?.covid : covidStatus === 'yes'}
+          />
+          <label htmlFor='covid-yes'>Yes</label>
+        </DivRadio>
 
-              <DivRadio>
-                <input
-                  type='radio'
-                  id='covid-yes'
-                  name='radio-covid'
-                  value='yes'
-                  onChange={handleCovidStatus}
-                  checked={covidStatus === 'yes'}
-                />
-                <label htmlFor='covid-yes'>Yes</label>
-              </DivRadio>
+        <DivRadio>
+          <input
+            type='radio'
+            id='covid-no'
+            name='radio-covid'
+            value='no'
+            onChange={e => setCovidStatus(e.currentTarget.value)}
+            checked={props ? editedTrip?.covid : covidStatus === 'no'}
+          />
+          <label htmlFor='covid-no'>No</label>
+        </DivRadio>
+        {errors.covid && <DivAlert>Please choose if you have been tested for COVID-19</DivAlert>}
 
-              <DivRadio>
-                <input
-                  type='radio'
-                  id='covid-no'
-                  name='radio-covid'
-                  value='no'
-                  onChange={handleCovidStatus}
-                  checked={covidStatus === 'no'}
-                />
-                <label htmlFor='covid-no'>No</label>
-              </DivRadio>
-              {errors.covid && (
-                <DivAlert>Please choose if you have been tested for COVID-19</DivAlert>
-              )}
+        {covidStatus === 'yes' ? (
+          <DivTestDate>
+            <h5>Date of receiving test results</h5>
+            <InputText
+              type='date'
+              placeholder='dd.mm.yy'
+              onChange={e => setCovidDate(e.currentTarget.value)}
+              value={props ? editedTrip?.covid_test_date : covidDate}
+              className={covidDate ? 'date-input--has-value' : ''}
+              style={{ borderColor: errors.covidDate ? theme.errorColor : theme.borderColor }}
+            />
+            {errors.covidDate && (
+              <DivAlert>Please choose the date you have been tested for COVID-19</DivAlert>
+            )}
+          </DivTestDate>
+        ) : (
+          <div />
+        )}
+      </DivFormBox>
 
-              {covidStatus === 'yes' ? (
-                <DivTestDate>
-                  <h5>Date of receiving test results</h5>
-                  <InputText
-                    type='date'
-                    placeholder='dd.mm.yy'
-                    onChange={handleCovidDate}
-                    value={covidDate}
-                    className={covidDate ? 'date-input--has-value' : ''}
-                    style={{ borderColor: errors.covidDate ? theme.errorColor : theme.borderColor }}
-                  />
-                  {errors.covidDate && (
-                    <DivAlert>Please choose the date you have been tested for COVID-19</DivAlert>
-                  )}
-                </DivTestDate>
-              ) : (
-                <div />
-              )}
-            </DivFormBox>
+      <DivBorder />
+      <ButtonSubmit>
+        Save <FiCheck />
+      </ButtonSubmit>
 
-            <DivBorder />
-            <ButtonSubmit>
-              Save <FiCheck />
-            </ButtonSubmit>
-
-            {createTripError && <ErrorAPI errorText={createTripError} />}
-          </form>
-        </DivFormWrap>
-      </DivNewTrip>
-
-      <MobileTripsSidebar />
-    </DivContainer>
+      {createTripError && <ErrorAPI errorText={createTripError} />}
+    </form>
   );
 };
-
-const DivContainer = styled.div({
-  display: 'flex',
-  flexDirection: 'row',
-  '@media all and (max-width: 1000px)': {
-    flexDirection: 'column',
-  },
-});
-
-const DivNewTrip = styled.div({
-  width: '75%',
-  padding: '38px',
-  '@media all and (max-width: 1000px)': {
-    width: '100%',
-  },
-  '@media all and (max-width: 800px)': {
-    padding: '20px',
-  },
-  '@media all and (max-width: 750px)': {
-    paddingTop: '30px',
-  },
-});
-
-const DivFormWrap = styled.div({
-  maxWidth: '500px',
-  margin: 'auto',
-  '@media all and (max-width: 750px)': {
-    maxWidth: '100%',
-  },
-});
-
-const H1 = styled.h1({
-  borderBottom: `1px solid ${theme.borderColor}`,
-  paddingBottom: '24px',
-  textAlign: 'left',
-});
 
 const DivFormBox = styled.div({
   backgroundColor: theme.primaryGrey,

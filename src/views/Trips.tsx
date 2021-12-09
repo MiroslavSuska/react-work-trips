@@ -11,7 +11,7 @@ import { useContext } from 'react';
 import TransitionGroup from 'react-transition-group/TransitionGroup';
 import styled from 'styled-components';
 
-export const WorkTrips = () => {
+export const Trips = () => {
   const { trips, tripErrorAPI, loadingAPI } = useContext(TripContext);
   const tripsRedux = useAppSelector(state => state.trips);
 

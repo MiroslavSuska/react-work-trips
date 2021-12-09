@@ -22,7 +22,7 @@ type tripType = {
 
 export const TheTripMobile = (props: tripType) => {
   return (
-    <LinkTripContainer to={`trip/${props.id}`}>
+    <LinkTripContainer to={`/trips/${props.id}`}>
       <DivHeader>
         <TheFlag image={props.address.country} imageSize={'20'} />
         <DivCountry>{props.address.country}</DivCountry>
