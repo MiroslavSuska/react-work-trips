@@ -13,13 +13,15 @@ import chevronUp from '../images/chevron-up.png';
 import styled from 'styled-components';
 
 export const TripEdit = () => {
+  const handleEditTrip = trip => {};
+
   return (
     <DivOuterContainer>
       <DivInnerContainer>
         <H1>Edit trip</H1>
 
         <DivFormContainer>
-          <TripForm tripEditing />
+          <TripForm tripEditing handleTrip={handleEditTrip} />
           {/* <form onSubmit={handleSubmit}>
             <DivFormBox>
               <h5>Where do you want to go</h5>

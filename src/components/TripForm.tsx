@@ -41,6 +41,8 @@ type errors = {
 
 type Props = {
   tripEditing?: boolean;
+  handleTrip: (trip: tripType) => void;
+  apiTripError: any;
 };
 
 type TripRouteParams = {
@@ -61,7 +63,7 @@ export const TripForm = (props: Props) => {
   const [zipCode, setZipCode] = useState<string>('');
   const [covidStatus, setCovidStatus] = useState('');
   const [covidDate, setCovidDate] = useState<string>('');
-  const [createTripError, setCreateTripError] = useState<any>();
+  //const [apiTripError, setApiTripError] = useState<any>();
   const [errors, setErrors] = useState<errors>({
     country: false,
     startDate: false,
@@ -120,7 +122,9 @@ export const TripForm = (props: Props) => {
     // setErrorZip(false);
     // setErrorCovid(false);
     // setErrorProperDate(false);
-    setCreateTripError('');
+
+    //API error
+    //setApiTripError('');
     setErrors({
       country: false,
       startDate: false,
@@ -304,23 +308,23 @@ export const TripForm = (props: Props) => {
     return false;
   };
 
-  // create axios post request
-  const createTrip = async (newTrip: tripType) => {
-    try {
-      const response = await authAxios.post('/trip', newTrip);
-      const data = response.data;
-      //console.log(data.id);
-      newTrip.id = data.id;
+  // // create axios post request
+  // const createTrip = async (newTrip: tripType) => {
+  //   try {
+  //     const response = await authAxios.post('/trip', newTrip);
+  //     const data = response.data;
+  //     //console.log(data.id);
+  //     newTrip.id = data.id;
 
-      dispatch(addTripp(newTrip));
+  //     dispatch(addTripp(newTrip));
 
-      addTrips(newTrip);
-      setFlashDisplay(true);
-      setFlashMessage('Trip was successfully added');
-    } catch (err) {
-      setCreateTripError(err);
-    }
-  };
+  //     addTrips(newTrip);
+  //     setFlashDisplay(true);
+  //     setFlashMessage('Trip was successfully added');
+  //   } catch (err) {
+  //     setCreateTripError(err);
+  //   }
+  // };
 
   // handle submit button for new trip
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -343,7 +347,7 @@ export const TripForm = (props: Props) => {
         covid_test_date: covidDate,
       };
 
-      createTrip(newTrip);
+      props.handleTrip(newTrip);
       clearInputs();
       clearErrors();
       history.push('/');
@@ -362,8 +366,8 @@ export const TripForm = (props: Props) => {
             id='country-select'
             onChange={e => setCountry(e.currentTarget.value)}
             // value={props ? editedTrip?.address.country : country}
-            value={country}
-            //defaultValue={editedTrip?.address.country}
+            //value={country}
+            defaultValue={editedTrip?.address.country || country}
             style={{
               borderColor: errors.country ? theme.errorColor : theme.borderColor,
               color: country ? theme.primaryBlack : theme.placeholderColor,
@@ -519,7 +523,7 @@ export const TripForm = (props: Props) => {
         Save <FiCheck />
       </ButtonSubmit>
 
-      {createTripError && <ErrorAPI errorText={createTripError} />}
+      {props.apiTripError && <ErrorAPI errorText={props.apiTripError.toString} />}
     </form>
   );
 };

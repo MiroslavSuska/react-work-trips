@@ -12,14 +12,54 @@ import { useHistory, useParams } from 'react-router-dom';
 import chevronUp from '../images/chevron-up.png';
 import styled from 'styled-components';
 
+type tripType = {
+  id: undefined | string;
+  start_date: string;
+  end_date: string;
+  company_name: string;
+  address: {
+    street: undefined | string;
+    street_num: undefined | string;
+    city: undefined | string;
+    country: string;
+    zip: string;
+  };
+  covid: boolean;
+  covid_test_date: undefined | string;
+};
+
 export const TripCreate = () => {
+  const { addTrips, countries, countryErrorAPI, setFlashDisplay, setFlashMessage } =
+    useContext(TripContext);
+  const [apiTripError, setApiTripError] = useState<any>();
+  const dispatch = useAppDispatch();
+
+  // create axios post request
+  const handleCreateTrip = async (newTrip: tripType) => {
+    try {
+      const response = await authAxios.post('/trip', newTrip);
+      const data = response.data;
+      //console.log(data.id);
+      newTrip.id = data.id;
+
+      dispatch(addTripp(newTrip));
+      console.log(newTrip);
+
+      addTrips(newTrip);
+      setFlashDisplay(true);
+      setFlashMessage('Trip was successfully added');
+    } catch (err) {
+      setApiTripError(err);
+    }
+  };
+
   return (
     <DivOuterContainer>
       <DivInnerContainer>
         <H1>New trip</H1>
 
         <DivFormContainer>
-          <TripForm />
+          <TripForm handleTrip={handleCreateTrip} apiTripError={apiTripError} />
         </DivFormContainer>
       </DivInnerContainer>
 

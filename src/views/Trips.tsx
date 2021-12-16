@@ -7,13 +7,17 @@ import { TipAndTrickSidebar } from '../components/TipAndTrickSidebar';
 import { TripContext } from '../context/TripContext';
 import { theme } from '../styles/theme';
 import { useAppSelector } from '../app/hooks';
-import { useContext } from 'react';
+import { useContext, useEffect } from 'react';
 import TransitionGroup from 'react-transition-group/TransitionGroup';
 import styled from 'styled-components';
 
 export const Trips = () => {
   const { trips, tripErrorAPI, loadingAPI } = useContext(TripContext);
   const tripsRedux = useAppSelector(state => state.trips);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   return (
     <DivContainer>
