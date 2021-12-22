@@ -7,9 +7,9 @@ type tripType = {
   end_date: string;
   company_name: string;
   address: {
-    street: undefined | string;
+    street: string;
     street_num: undefined | string;
-    city: undefined | string;
+    city: string;
     country: string;
     zip: string;
   };

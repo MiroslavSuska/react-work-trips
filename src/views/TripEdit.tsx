@@ -12,8 +12,45 @@ import { useHistory, useParams } from 'react-router-dom';
 import chevronUp from '../images/chevron-up.png';
 import styled from 'styled-components';
 
+type tripType = {
+  id: undefined | string;
+  start_date: string;
+  end_date: string;
+  company_name: string;
+  address: {
+    street: string;
+    street_num: undefined | string;
+    city: string;
+    country: string;
+    zip: string;
+  };
+  covid: boolean;
+  covid_test_date: undefined | string;
+};
+
 export const TripEdit = () => {
-  const handleEditTrip = trip => {};
+  const { setFlashDisplay, setFlashMessage } = useContext(TripContext);
+
+  // create edit post request
+  const handleEditTrip = async (updatedTrip: any) => {
+    const tripID = updatedTrip.id;
+    console.log(tripID);
+
+    try {
+      const response = await authAxios.put(`/trip/pXAnl165ywwZ9gaqrouY`, updatedTrip);
+      const data = response.data;
+      console.log(data);
+
+      //dispatch(addTripp(newTrip));
+      console.log(updatedTrip);
+
+      //addTrips(newTrip);
+      setFlashDisplay(true);
+      setFlashMessage('Trip was successfully updated');
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   return (
     <DivOuterContainer>
@@ -21,7 +58,7 @@ export const TripEdit = () => {
         <H1>Edit trip</H1>
 
         <DivFormContainer>
-          <TripForm tripEditing handleTrip={handleEditTrip} />
+          <TripForm tripEditing handleTrip={handleEditTrip} apiTripError={''} />
           {/* <form onSubmit={handleSubmit}>
             <DivFormBox>
               <h5>Where do you want to go</h5>

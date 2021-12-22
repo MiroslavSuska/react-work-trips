@@ -16,9 +16,9 @@ type tripType = {
   end_date: string;
   company_name: string;
   address: {
-    street: undefined | string;
+    street: string;
     street_num: undefined | string;
-    city: undefined | string;
+    city: string;
     country: string;
     zip: string;
   };
@@ -41,7 +41,7 @@ type errors = {
 
 type Props = {
   tripEditing?: boolean;
-  handleTrip: (trip: tripType) => void;
+  handleTrip: (trip: any) => void;
   apiTripError: any;
 };
 
@@ -53,16 +53,22 @@ type TripRouteParams = {
 export const TripForm = (props: Props) => {
   const { addTrips, countries, countryErrorAPI, setFlashDisplay, setFlashMessage } =
     useContext(TripContext);
+
+  const { tripID } = useParams<TripRouteParams>();
+  const countriesRedux = useAppSelector(state => state.countries);
+  const reduxTrips = useAppSelector(state => state.trips);
+  const editedTrip = reduxTrips.find(trip => trip.id === tripID);
+
   const [country, setCountry] = useState<string>('');
   const [startDate, setStartDate] = useState<string>('');
   const [endDate, setEndDate] = useState<string>('');
   const [company, setCompany] = useState<string>('');
   const [city, setCity] = useState<string>('');
   const [street, setStreet] = useState<string>('');
-  const [streetNumber, setStreetNumber] = useState<string>('');
+  const [streetNumber, setStreetNumber] = useState<string | undefined>('');
   const [zipCode, setZipCode] = useState<string>('');
   const [covidStatus, setCovidStatus] = useState('');
-  const [covidDate, setCovidDate] = useState<string>('');
+  const [covidDate, setCovidDate] = useState<string | undefined>('');
   //const [apiTripError, setApiTripError] = useState<any>();
   const [errors, setErrors] = useState<errors>({
     country: false,
@@ -77,17 +83,28 @@ export const TripForm = (props: Props) => {
     covidDate: false,
   });
   const history = useHistory();
-  const { tripID } = useParams<TripRouteParams>();
 
   const dispatch = useAppDispatch();
-  const countriesRedux = useAppSelector(state => state.countries);
-  const reduxTrips = useAppSelector(state => state.trips);
-  const editedTrip = reduxTrips.find(trip => trip.id === tripID);
+
   console.log(editedTrip);
 
   useEffect(() => {
     const setDefaultValues = () => {
-      //setCountry(editedTrip?.address.country);
+      if (editedTrip && props.tripEditing) {
+        setCountry(editedTrip.address.country);
+        setStartDate(editedTrip.start_date);
+        setEndDate(editedTrip.end_date);
+        setCompany(editedTrip.company_name);
+        setCity(editedTrip.address.city);
+        setStreet(editedTrip.address.street);
+        setStreetNumber(editedTrip.address.street_num);
+        setZipCode(editedTrip.address.zip);
+
+        if (editedTrip.covid) {
+          setCovidStatus('yes');
+          setCovidDate(editedTrip.covid_test_date);
+        } else setCovidStatus('no');
+      }
     };
 
     setDefaultValues();
@@ -331,23 +348,44 @@ export const TripForm = (props: Props) => {
     e.preventDefault();
 
     if (validate()) {
-      const newTrip = {
-        id: undefined,
-        start_date: startDate,
-        end_date: endDate,
-        company_name: company.trim(),
-        address: {
-          street: street.trim(),
-          street_num: undefined,
-          city: city.trim(),
-          country: country.trim(),
-          zip: zipCode.trim(),
-        },
-        covid: covidData(),
-        covid_test_date: covidDate,
-      };
+      if (props.tripEditing) {
+        const updatedTrip = {
+          start_date: startDate,
+          end_date: endDate,
+          company_name: company.trim(),
+          address: {
+            street: street.trim(),
+            street_num: undefined,
+            city: city.trim(),
+            country: country,
+            zip: zipCode.trim(),
+          },
+          covid: covidData(),
+          covid_test_date: covidDate,
+        };
+        console.log('editing');
+        console.log(updatedTrip);
 
-      props.handleTrip(newTrip);
+        props.handleTrip(updatedTrip);
+      } else {
+        const newTrip = {
+          id: undefined,
+          start_date: startDate,
+          end_date: endDate,
+          company_name: company.trim(),
+          address: {
+            street: street.trim(),
+            street_num: undefined,
+            city: city.trim(),
+            country: country,
+            zip: zipCode.trim(),
+          },
+          covid: covidData(),
+          covid_test_date: covidDate,
+        };
+        props.handleTrip(newTrip);
+      }
+
       clearInputs();
       clearErrors();
       history.push('/');
@@ -365,9 +403,7 @@ export const TripForm = (props: Props) => {
             name='countries'
             id='country-select'
             onChange={e => setCountry(e.currentTarget.value)}
-            // value={props ? editedTrip?.address.country : country}
-            //value={country}
-            defaultValue={editedTrip?.address.country || country}
+            value={country}
             style={{
               borderColor: errors.country ? theme.errorColor : theme.borderColor,
               color: country ? theme.primaryBlack : theme.placeholderColor,
@@ -391,7 +427,7 @@ export const TripForm = (props: Props) => {
           type='date'
           placeholder='dd.mm.yy'
           onChange={e => setStartDate(e.currentTarget.value)}
-          value={props ? editedTrip?.start_date : startDate}
+          value={startDate}
           className={startDate ? 'date-input--has-value' : ''}
           style={{
             borderColor:
@@ -405,7 +441,7 @@ export const TripForm = (props: Props) => {
           type='date'
           placeholder='dd.mm.yy'
           onChange={e => setEndDate(e.currentTarget.value)}
-          value={props ? editedTrip?.end_date : endDate}
+          value={endDate}
           className={endDate ? 'date-input--has-value' : ''}
           style={{
             borderColor:
@@ -424,7 +460,7 @@ export const TripForm = (props: Props) => {
           type='text'
           placeholder='Type here ...'
           onChange={e => setCompany(e.currentTarget.value)}
-          value={props ? editedTrip?.company_name : company}
+          value={company}
           style={{ borderColor: errors.company ? theme.errorColor : theme.borderColor }}
         />
         {errors.company && <DivAlert>Please type a company</DivAlert>}
@@ -434,7 +470,7 @@ export const TripForm = (props: Props) => {
           type='text'
           placeholder='Type here ...'
           onChange={e => setCity(e.currentTarget.value)}
-          value={props ? editedTrip?.address.city : city}
+          value={city}
           style={{ borderColor: errors.city ? theme.errorColor : theme.borderColor }}
         />
         {errors.city && <DivAlert>Please type a city</DivAlert>}
@@ -444,7 +480,7 @@ export const TripForm = (props: Props) => {
           type='text'
           placeholder='Type here ...'
           onChange={e => setStreet(e.currentTarget.value)}
-          value={props ? editedTrip?.address.street : street}
+          value={street}
           style={{ borderColor: errors.street ? theme.errorColor : theme.borderColor }}
         />
         {errors.street && <DivAlert>Please type a street</DivAlert>}
@@ -454,7 +490,7 @@ export const TripForm = (props: Props) => {
           type='number'
           placeholder='Type here ...'
           onChange={e => setStreetNumber(e.currentTarget.value)}
-          value={props ? editedTrip?.address.street_num : streetNumber}
+          value={streetNumber}
         />
 
         <h5>Zip code</h5>
@@ -462,7 +498,7 @@ export const TripForm = (props: Props) => {
           type='number'
           placeholder='Type here ...'
           onChange={e => setZipCode(e.currentTarget.value)}
-          value={props ? editedTrip?.address.zip : zipCode}
+          value={zipCode}
           style={{ borderColor: errors.zip ? theme.errorColor : theme.borderColor }}
         />
         {errors.zip && <DivAlert>Please type a zip code</DivAlert>}
@@ -480,7 +516,7 @@ export const TripForm = (props: Props) => {
             name='radio-covid'
             value='yes'
             onChange={e => setCovidStatus(e.currentTarget.value)}
-            checked={props ? editedTrip?.covid : covidStatus === 'yes'}
+            checked={covidStatus === 'yes'}
           />
           <label htmlFor='covid-yes'>Yes</label>
         </DivRadio>
@@ -492,7 +528,7 @@ export const TripForm = (props: Props) => {
             name='radio-covid'
             value='no'
             onChange={e => setCovidStatus(e.currentTarget.value)}
-            checked={props ? editedTrip?.covid : covidStatus === 'no'}
+            checked={covidStatus === 'no'}
           />
           <label htmlFor='covid-no'>No</label>
         </DivRadio>
@@ -505,7 +541,7 @@ export const TripForm = (props: Props) => {
               type='date'
               placeholder='dd.mm.yy'
               onChange={e => setCovidDate(e.currentTarget.value)}
-              value={props ? editedTrip?.covid_test_date : covidDate}
+              value={covidDate}
               className={covidDate ? 'date-input--has-value' : ''}
               style={{ borderColor: errors.covidDate ? theme.errorColor : theme.borderColor }}
             />
