@@ -1,35 +1,44 @@
 import { TripContext } from '../context/TripContext';
 import { theme } from '../styles/theme';
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect } from 'react';
 import styled from 'styled-components';
 
 export const FlashMessage = () => {
-  const { setFlashDisplay, flashMessage, flashDisplay } = useContext(TripContext);
+  const { setFlashMessage, flashMessage } = useContext(TripContext);
 
   useEffect(() => {
     const messageTime = setTimeout(() => {
-      setFlashDisplay(false);
+      setFlashMessage({ display: false, type: flashMessage.type, text: flashMessage.text });
     }, 3000);
 
     return () => {
       clearTimeout(messageTime);
     };
-  }, [flashDisplay]);
+  }, [flashMessage.display]);
 
-  if (!flashDisplay) {
+  if (!flashMessage.display) {
     return null;
   }
 
-  return <DivFlashMessage> {flashMessage} </DivFlashMessage>;
+  return (
+    <DivFlashMessage
+      style={{
+        backgroundColor: flashMessage.type === 'success' ? theme.successColor : theme.errorColor,
+      }}
+    >
+      {' '}
+      {flashMessage.text}{' '}
+    </DivFlashMessage>
+  );
 };
 
 const DivFlashMessage = styled.div({
   padding: '20px',
-  backgroundColor: theme.successColor,
   color: theme.primaryWhite,
   fontWeight: 'bold',
   position: 'fixed',
   bottom: '60px',
   right: '60px',
   zIndex: 9999,
+  transition: 'all .4s ease',
 });

@@ -39,8 +39,9 @@ export default function App() {
 }
 
 export const DivMain = styled.div({
-  flex: '0.87 1',
-  //marginLeft: '240px',
+  //flex: '0.87 1',
+  position: 'relative',
+  marginLeft: '240px',
   width: '100%',
   zIndex: 20,
   '@media all and (max-width: 1000px)': {
@@ -52,10 +53,9 @@ export const DivMain = styled.div({
 });
 
 export const DivNavbar = styled.div({
-  //display: 'flex',
-  flex: '0.13 1',
-  flexDirection: 'row',
-  position: 'relative',
+  display: 'flex',
+  //flex: '0.13 1',
+  //flexDirection: 'row',
 });
 
 export const DivApp = styled.div({

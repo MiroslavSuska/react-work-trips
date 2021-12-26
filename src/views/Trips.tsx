@@ -12,7 +12,7 @@ import TransitionGroup from 'react-transition-group/TransitionGroup';
 import styled from 'styled-components';
 
 export const Trips = () => {
-  const { trips, tripErrorAPI, loadingAPI } = useContext(TripContext);
+  const { tripErrorAPI, loadingAPI } = useContext(TripContext);
   const tripsRedux = useAppSelector(state => state.trips);
 
   useEffect(() => {

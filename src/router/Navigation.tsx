@@ -2,13 +2,13 @@ import { AiOutlinePlus } from 'react-icons/ai';
 import { BsClock } from 'react-icons/bs';
 import { FaBars } from 'react-icons/fa';
 import { FlashMessage } from '../components/FlashMessage';
-import { Link, Route, BrowserRouter as Router, Switch } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { TripContext } from '../context/TripContext';
-import { addCountriess } from '../features/countries/countrySlice';
-import { addTripss } from '../features/trips/tripSlice';
+import { addCountries } from '../features/countries/countrySlice';
+import { addTrips } from '../features/trips/tripSlice';
 import { authAxios } from '../API-config/configAPI';
 import { theme } from '../styles/theme';
-import { useAppDispatch, useAppSelector } from '../app/hooks';
+import { useAppDispatch } from '../app/hooks';
 import { useContext, useEffect, useState } from 'react';
 import logo from '../images/logo.jpg';
 import styled from 'styled-components';
@@ -16,8 +16,7 @@ import styled from 'styled-components';
 export const Navigation = () => {
   const [mobileNavbar, setMobileNavbar] = useState(false);
   const [windowSize, setWindowSize] = useState(window.innerWidth);
-  const { trips, addTrips, addCountries, setTripErrorAPI, setCountryErrorAPI, setLoadingAPI } =
-    useContext(TripContext);
+  const { setTripErrorAPI, setCountryErrorAPI, setLoadingAPI } = useContext(TripContext);
 
   const dispatch = useAppDispatch();
 
@@ -28,7 +27,7 @@ export const Navigation = () => {
       try {
         const response = await authAxios.get('trip');
         const fetchedTrips = response.data;
-        dispatch(addTripss(fetchedTrips));
+        dispatch(addTrips(fetchedTrips));
         addTrips(fetchedTrips);
       } catch (err) {
         setTripErrorAPI(err);
@@ -40,10 +39,9 @@ export const Navigation = () => {
     const fetchCountryData = async () => {
       try {
         const response = await authAxios.get('country');
-        const fetchedCountries = response.data;
-        addCountries(fetchedCountries);
+        const fetchedCountries = await response.data;
 
-        dispatch(addCountriess(fetchedCountries));
+        dispatch(addCountries(fetchedCountries));
       } catch (err) {
         setCountryErrorAPI(err);
         //console.log(err);
@@ -75,16 +73,16 @@ export const Navigation = () => {
   };
 
   return (
-    <DivNavContainer>
+    <DivNavContainer
+      style={{
+        top: mobileNavbar ? '0' : !mobileNavbar && windowSize > 750 ? '0' : '-100vh',
+      }}
+    >
       <ButtonBurger onClick={handleNavButton}>
         <FaBarStyled />
       </ButtonBurger>
 
-      <NavStyled
-        style={{
-          top: mobileNavbar ? '0' : !mobileNavbar && windowSize > 750 ? '0' : '-100vh',
-        }}
-      >
+      <NavStyled>
         <LinkBrand href='/'>
           <img src={logo} alt='logo' />
         </LinkBrand>
@@ -103,43 +101,60 @@ export const Navigation = () => {
         </UlNavigation>
       </NavStyled>
 
-      {/* <DivContent style={{ display: mobileNavbar ? 'none' : 'block' }}>
-        <Switch>
-          <Route exact path='/new-trip'>
-            <NewTrip />
-          </Route>
-          <Route exact path={`/trip/:tripID`}>
-            <TheTripDetail />
-          </Route>
-          <Route exact path='/'>
-            <WorkTrips />
-          </Route>
-        </Switch>
-      </DivContent> */}
-
       <FlashMessage />
     </DivNavContainer>
   );
 };
 
 const DivNavContainer = styled.div({
-  display: 'fixed',
-  flexDirection: 'row',
-  position: 'relative',
-  left: 0,
-  height: '100vh',
-});
-
-const DivContent = styled.div({
-  marginLeft: '240px',
+  //display: 'fixed',
+  //flexDirection: 'row',
+  //position: 'relative',
+  height: '100%',
   width: '100%',
-  zIndex: 20,
+  backgroundColor: `${theme.primaryGrey}`,
+  transition: 'all 0.3s ease',
+  justifyContent: 'center',
+  alignItems: 'center',
+  padding: '38px',
+  zIndex: 10,
+  position: 'fixed',
+  left: 0,
+  top: 0,
+  maxWidth: '240px',
+  //width: '100%',
   '@media all and (max-width: 1000px)': {
-    marginLeft: '200px',
+    maxWidth: '200px',
+    padding: '40px 18px 18px 18px',
+  },
+  '@media all and (max-width: 800px)': {
+    paddingTop: '20px',
   },
   '@media all and (max-width: 750px)': {
-    margin: 0,
+    maxWidth: '100%',
+    zIndex: 60,
   },
+});
+
+const NavStyled = styled.nav({
+  //position: 'fixed',
+  //left: 0,
+  //top: 0,
+  //height: '100%',
+  //maxWidth: '240px',
+  width: '100%',
+
+  // '@media all and (max-width: 1000px)': {
+  //   maxWidth: '200px',
+  //   padding: '40px 18px 18px 18px',
+  // },
+  // '@media all and (max-width: 800px)': {
+  //   paddingTop: '20px',
+  // },
+  // '@media all and (max-width: 750px)': {
+  //   maxWidth: '100%',
+  //   zIndex: 60,
+  // },
 });
 
 const ButtonBurger = styled.button({
@@ -151,7 +166,7 @@ const ButtonBurger = styled.button({
   height: '40px',
   padding: '14px',
   '@media all and (max-width: 750px)': {
-    position: 'absolute',
+    position: 'fixed',
     top: '20px',
     left: '20px',
     display: 'flex',
@@ -166,33 +181,6 @@ const FaBarStyled = styled(FaBars)({
   color: theme.tertiaryGrey,
   fontSize: '14px',
 });
-
-const NavStyled = styled.nav({
-  //position: 'fixed',
-  //left: 0,
-  //top: 0,
-  //height: '100%',
-  //maxWidth: '240px',
-  width: '100%',
-  backgroundColor: `${theme.primaryGrey}`,
-  transition: 'all 0.3s ease',
-  justifyContent: 'center',
-  alignItems: 'center',
-  padding: '38px',
-  zIndex: 10,
-  '@media all and (max-width: 1000px)': {
-    maxWidth: '200px',
-    padding: '40px 18px 18px 18px',
-  },
-  '@media all and (max-width: 800px)': {
-    paddingTop: '20px',
-  },
-  '@media all and (max-width: 750px)': {
-    maxWidth: '100%',
-    zIndex: 60,
-  },
-});
-
 const Li = styled.li`
   align-items: center;
   justify-content: center;

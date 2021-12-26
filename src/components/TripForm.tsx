@@ -1,8 +1,6 @@
 import { ErrorAPI } from './ErrorAPI';
 import { FiCheck } from 'react-icons/fi';
 import { TripContext } from '../context/TripContext';
-import { addTripp } from '../features/trips/tripSlice';
-import { authAxios } from '../API-config/configAPI';
 import { theme } from '../styles/theme';
 import { useAppDispatch, useAppSelector } from '../app/hooks';
 import { useContext, useEffect, useState } from 'react';
@@ -41,6 +39,7 @@ type errors = {
 
 type Props = {
   tripEditing?: boolean;
+  tripID?: any;
   handleTrip: (trip: any) => void;
   apiTripError: any;
 };
@@ -85,9 +84,6 @@ export const TripForm = (props: Props) => {
   const history = useHistory();
 
   const dispatch = useAppDispatch();
-
-  console.log(editedTrip);
-
   useEffect(() => {
     const setDefaultValues = () => {
       if (editedTrip && props.tripEditing) {
@@ -325,24 +321,6 @@ export const TripForm = (props: Props) => {
     return false;
   };
 
-  // // create axios post request
-  // const createTrip = async (newTrip: tripType) => {
-  //   try {
-  //     const response = await authAxios.post('/trip', newTrip);
-  //     const data = response.data;
-  //     //console.log(data.id);
-  //     newTrip.id = data.id;
-
-  //     dispatch(addTripp(newTrip));
-
-  //     addTrips(newTrip);
-  //     setFlashDisplay(true);
-  //     setFlashMessage('Trip was successfully added');
-  //   } catch (err) {
-  //     setCreateTripError(err);
-  //   }
-  // };
-
   // handle submit button for new trip
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -350,6 +328,7 @@ export const TripForm = (props: Props) => {
     if (validate()) {
       if (props.tripEditing) {
         const updatedTrip = {
+          id: undefined,
           start_date: startDate,
           end_date: endDate,
           company_name: company.trim(),
@@ -363,8 +342,6 @@ export const TripForm = (props: Props) => {
           covid: covidData(),
           covid_test_date: covidDate,
         };
-        console.log('editing');
-        console.log(updatedTrip);
 
         props.handleTrip(updatedTrip);
       } else {

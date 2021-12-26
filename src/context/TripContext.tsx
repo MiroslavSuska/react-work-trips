@@ -21,13 +21,19 @@ type countryType = {
   label: string;
 };
 
+type flashMessageType = {
+  display: boolean;
+  type: 'success' | 'error';
+  text: string;
+};
+
 type ContextProps = {
   trips: tripType[];
   countries: countryType[];
   tripErrorAPI: any;
   countryErrorAPI: any;
   loadingAPI: boolean;
-  flashMessage: string;
+  flashMessage: flashMessageType;
   flashDisplay: boolean;
   addTrips: (fetchedTrips: tripType[] | tripType) => void;
   deleteTrip: (tripID: string) => void;
@@ -35,7 +41,7 @@ type ContextProps = {
   setTripErrorAPI: React.Dispatch<any>;
   setCountryErrorAPI: React.Dispatch<any>;
   setLoadingAPI: React.Dispatch<boolean>;
-  setFlashMessage: React.Dispatch<string>;
+  setFlashMessage: React.Dispatch<flashMessageType>;
   setFlashDisplay: React.Dispatch<boolean>;
 };
 
@@ -47,7 +53,11 @@ export const TripContextProvider = (props: { children: ReactNode }) => {
   const [tripErrorAPI, setTripErrorAPI] = useState(null as any | string);
   const [countryErrorAPI, setCountryErrorAPI] = useState(null as any | string);
   const [loadingAPI, setLoadingAPI] = useState(false);
-  const [flashMessage, setFlashMessage] = useState('');
+  const [flashMessage, setFlashMessage] = useState<flashMessageType>({
+    display: false,
+    type: 'success',
+    text: '',
+  });
   const [flashDisplay, setFlashDisplay] = useState(false);
 
   // add trips from API on page load, or one trip from form to context

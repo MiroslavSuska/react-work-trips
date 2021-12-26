@@ -13,12 +13,10 @@ type Props = {
 };
 
 export const ControlButtons = (props: Props) => {
-  const { deleteTrip, setFlashDisplay, setFlashMessage } = useContext(TripContext);
+  const { setFlashMessage } = useContext(TripContext);
   const history = useHistory();
   const dispatch = useAppDispatch();
   const countriesRedux = useAppSelector(state => state.countries);
-
-  const handleEditTrip = () => {};
 
   const handleDeleteTrip = async () => {
     if (window.confirm('Are you sure ?')) {
@@ -27,12 +25,15 @@ export const ControlButtons = (props: Props) => {
         const data = response.data;
 
         dispatch(removeTrip(props.tripID));
-        deleteTrip(props.tripID);
+        setFlashMessage({ display: true, type: 'success', text: 'Trip was successfully deleted' });
         history.push('/');
-        setFlashDisplay(true);
-        setFlashMessage('Trip was successfully deleted');
-        //console.log(data);
       } catch (err) {
+        setFlashMessage({
+          display: true,
+          type: 'error',
+          text: 'Something went wrong, trip was not deleted',
+        });
+        history.push('/');
         //console.log(err);
       }
     }

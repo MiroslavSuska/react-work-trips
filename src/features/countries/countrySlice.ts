@@ -12,13 +12,13 @@ export const countrySlice = createSlice({
   name: 'countries',
   initialState,
   reducers: {
-    addCountriess: (state, action: PayloadAction<CountryState>) => {
+    addCountries: (state, action: PayloadAction<CountryState>) => {
       return [...state, ...action.payload];
     },
   },
 });
 
-export const { addCountriess } = countrySlice.actions;
+export const { addCountries } = countrySlice.actions;
 
 // Other code such as selectors can use the imported `RootState` type
 export const selectCountries = (state: RootState) => state.countries;

@@ -1,15 +1,11 @@
-import { ErrorAPI } from '../components/ErrorAPI';
-import { FiCheck } from 'react-icons/fi';
 import { MobileTripsSidebar } from '../components/MobileTripsSidebar';
 import { TripContext } from '../context/TripContext';
 import { TripForm } from '../components/TripForm';
-import { addTripp } from '../features/trips/tripSlice';
+import { addTrip } from '../features/trips/tripSlice';
 import { authAxios } from '../API-config/configAPI';
 import { theme } from '../styles/theme';
-import { useAppDispatch, useAppSelector } from '../app/hooks';
+import { useAppDispatch } from '../app/hooks';
 import { useContext, useState } from 'react';
-import { useHistory, useParams } from 'react-router-dom';
-import chevronUp from '../images/chevron-up.png';
 import styled from 'styled-components';
 
 type tripType = {
@@ -29,8 +25,7 @@ type tripType = {
 };
 
 export const TripCreate = () => {
-  const { addTrips, countries, countryErrorAPI, setFlashDisplay, setFlashMessage } =
-    useContext(TripContext);
+  const { setFlashMessage } = useContext(TripContext);
   const [apiTripError, setApiTripError] = useState<any>();
   const dispatch = useAppDispatch();
 
@@ -42,13 +37,16 @@ export const TripCreate = () => {
       //console.log(data.id);
       newTrip.id = data.id;
 
-      dispatch(addTripp(newTrip));
-      console.log(newTrip);
+      dispatch(addTrip(newTrip));
+      //console.log(newTrip);
 
-      addTrips(newTrip);
-      setFlashDisplay(true);
-      setFlashMessage('Trip was successfully added');
+      setFlashMessage({ display: true, type: 'success', text: 'Trip was successfully updated' });
     } catch (err) {
+      setFlashMessage({
+        display: true,
+        type: 'error',
+        text: 'Something went wrong, trip was not added',
+      });
       setApiTripError(err);
     }
   };

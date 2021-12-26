@@ -1,9 +1,9 @@
 import { ControlButtons } from '../components/ControlButtons';
 import { TheFlag } from '../components/TheFlag';
 import { TipAndTrickSidebar } from '../components/TipAndTrickSidebar';
-import { TripContext } from '../context/TripContext';
 import { theme } from '../styles/theme';
-import { useContext, useEffect } from 'react';
+import { useAppSelector } from '../app/hooks';
+import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import Moment from 'react-moment';
 import styled from 'styled-components';
@@ -25,14 +25,12 @@ type tripType = {
 };
 
 type TripRouteParams = {
-  trip: string;
   tripID: string;
 };
 
 export const TripDetail = () => {
-  const { trips } = useContext(TripContext);
   const { tripID } = useParams<TripRouteParams>();
-  const trip = trips.find(trip => trip.id === tripID);
+  const trip = useAppSelector(state => state.trips.find(trip => trip.id === tripID));
 
   useEffect(() => {
     window.scrollTo(0, 0);
