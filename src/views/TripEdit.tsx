@@ -35,14 +35,13 @@ export const TripEdit = () => {
   const dispatch = useAppDispatch();
 
   // create edit post request
-  const handleEditTrip = async (updatedTrip: any) => {
+  const handleEditTrip = async (updatedTrip: tripType) => {
     try {
       const response = await authAxios.put(`/trip/${tripID}`, updatedTrip);
       const data = response.data;
       //console.log(data);
 
       dispatch(editTrip({ updatedTrip, tripID }));
-
       setFlashMessage({ display: true, type: 'success', text: 'Trip was successfully updated' });
     } catch (err) {
       setFlashMessage({
@@ -50,7 +49,7 @@ export const TripEdit = () => {
         type: 'error',
         text: 'Something went wrong, trip was not updated',
       });
-      console.error(err);
+      //console.error(err);
     }
   };
 
@@ -60,7 +59,7 @@ export const TripEdit = () => {
         <H1>Edit trip</H1>
 
         <DivFormContainer>
-          <TripForm tripEditing handleTrip={handleEditTrip} apiTripError={''} />
+          <TripForm tripEditing handleTrip={handleEditTrip} />
         </DivFormContainer>
       </DivInnerContainer>
 

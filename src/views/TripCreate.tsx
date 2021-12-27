@@ -5,7 +5,7 @@ import { addTrip } from '../features/trips/tripSlice';
 import { authAxios } from '../API-config/configAPI';
 import { theme } from '../styles/theme';
 import { useAppDispatch } from '../app/hooks';
-import { useContext, useState } from 'react';
+import { useContext } from 'react';
 import styled from 'styled-components';
 
 type tripType = {
@@ -26,7 +26,6 @@ type tripType = {
 
 export const TripCreate = () => {
   const { setFlashMessage } = useContext(TripContext);
-  const [apiTripError, setApiTripError] = useState<any>();
   const dispatch = useAppDispatch();
 
   // create axios post request
@@ -47,7 +46,7 @@ export const TripCreate = () => {
         type: 'error',
         text: 'Something went wrong, trip was not added',
       });
-      setApiTripError(err);
+      //console.error(err);
     }
   };
 
@@ -57,7 +56,7 @@ export const TripCreate = () => {
         <H1>New trip</H1>
 
         <DivFormContainer>
-          <TripForm handleTrip={handleCreateTrip} apiTripError={apiTripError} />
+          <TripForm handleTrip={handleCreateTrip} />
         </DivFormContainer>
       </DivInnerContainer>
 

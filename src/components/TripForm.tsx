@@ -2,7 +2,7 @@ import { ErrorAPI } from './ErrorAPI';
 import { FiCheck } from 'react-icons/fi';
 import { TripContext } from '../context/TripContext';
 import { theme } from '../styles/theme';
-import { useAppDispatch, useAppSelector } from '../app/hooks';
+import { useAppSelector } from '../app/hooks';
 import { useContext, useEffect, useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import chevronUp from '../images/chevron-up.png';
@@ -39,9 +39,7 @@ type errors = {
 
 type Props = {
   tripEditing?: boolean;
-  tripID?: any;
-  handleTrip: (trip: any) => void;
-  apiTripError: any;
+  handleTrip: (trip: tripType) => void;
 };
 
 type TripRouteParams = {
@@ -50,13 +48,12 @@ type TripRouteParams = {
 };
 
 export const TripForm = (props: Props) => {
-  const { addTrips, countries, countryErrorAPI, setFlashDisplay, setFlashMessage } =
-    useContext(TripContext);
+  const { countryErrorAPI } = useContext(TripContext);
 
   const { tripID } = useParams<TripRouteParams>();
   const countriesRedux = useAppSelector(state => state.countries);
-  const reduxTrips = useAppSelector(state => state.trips);
-  const editedTrip = reduxTrips.find(trip => trip.id === tripID);
+  const tripsRedux = useAppSelector(state => state.trips);
+  const editedTrip = tripsRedux.find(trip => trip.id === tripID);
 
   const [country, setCountry] = useState<string>('');
   const [startDate, setStartDate] = useState<string>('');
@@ -68,7 +65,6 @@ export const TripForm = (props: Props) => {
   const [zipCode, setZipCode] = useState<string>('');
   const [covidStatus, setCovidStatus] = useState('');
   const [covidDate, setCovidDate] = useState<string | undefined>('');
-  //const [apiTripError, setApiTripError] = useState<any>();
   const [errors, setErrors] = useState<errors>({
     country: false,
     startDate: false,
@@ -83,7 +79,6 @@ export const TripForm = (props: Props) => {
   });
   const history = useHistory();
 
-  const dispatch = useAppDispatch();
   useEffect(() => {
     const setDefaultValues = () => {
       if (editedTrip && props.tripEditing) {
@@ -105,6 +100,20 @@ export const TripForm = (props: Props) => {
 
     setDefaultValues();
   }, []);
+
+  // handle Street number
+  const handleStreetNum = (event: React.FormEvent<HTMLInputElement>) => {
+    const re = /^[0-9|/\b]+$/;
+    if (event.currentTarget.value === '' || re.test(event.currentTarget.value)) {
+      setStreetNumber(event.currentTarget.value);
+    }
+  };
+
+  // handle ZipCode
+  const handleZipCode = (event: React.FormEvent<HTMLInputElement>) => {
+    const value = event.currentTarget.value.replace(/\D/g, '');
+    setZipCode(value);
+  };
 
   // check the string state of covid status and return boolean
   const covidData = () => {
@@ -128,14 +137,6 @@ export const TripForm = (props: Props) => {
 
   // reset all errors
   const clearErrors = () => {
-    // setErrorStartDate(false);
-    // setErrorEndDate(false);
-    // setErrorCompany(false);
-    // setErrorCountry(false);
-    // setErrorZip(false);
-    // setErrorCovid(false);
-    // setErrorProperDate(false);
-
     //API error
     //setApiTripError('');
     setErrors({
@@ -154,12 +155,6 @@ export const TripForm = (props: Props) => {
 
   // check for right inputs and reset errors
   const checkErrors = () => {
-    //if (startDate !== '') setErrorStartDate(false);
-    //if (endDate !== '') setErrorEndDate(false);
-    //if (company !== '') setErrorCompany(false);
-    //if (country !== '') setErrorCountry(false);
-    //if (zipCode !== '') setErrorZip(false);
-    //if (covidStatus !== '') setErrorCovid(false);
     if (dateIsValid()) {
       //setErrorProperDate(false);
       setErrors(prevState => ({
@@ -242,13 +237,11 @@ export const TripForm = (props: Props) => {
 
   // set error states
   const setErrorStatuses = () => {
-    //if (startDate === '') setErrorStartDate(true);
     if (startDate === '')
       setErrors(prevState => ({
         ...prevState,
         startDate: true,
       }));
-    //if (endDate === '') setErrorEndDate(true);
     if (endDate === '')
       setErrors(prevState => ({
         ...prevState,
@@ -259,13 +252,11 @@ export const TripForm = (props: Props) => {
         ...prevState,
         properDates: true,
       }));
-    //if (company === '') setErrorCompany(true);
     if (company === '')
       setErrors(prevState => ({
         ...prevState,
         company: true,
       }));
-    //if (country === '') setErrorCountry(true);
     if (country === '')
       setErrors(prevState => ({
         ...prevState,
@@ -281,13 +272,11 @@ export const TripForm = (props: Props) => {
         ...prevState,
         street: true,
       }));
-    //if (zipCode === '') setErrorZip(true);
     if (zipCode === '')
       setErrors(prevState => ({
         ...prevState,
         zip: true,
       }));
-    //if (covidStatus === '') setErrorCovid(true);
     if (covidStatus === '') {
       setErrors(prevState => ({
         ...prevState,
@@ -463,18 +452,12 @@ export const TripForm = (props: Props) => {
         {errors.street && <DivAlert>Please type a street</DivAlert>}
 
         <h5>Street number</h5>
-        <InputText
-          type='number'
-          placeholder='Type here ...'
-          onChange={e => setStreetNumber(e.currentTarget.value)}
-          value={streetNumber}
-        />
+        <InputText placeholder='Type here ...' onChange={handleStreetNum} value={streetNumber} />
 
         <h5>Zip code</h5>
         <InputText
-          type='number'
           placeholder='Type here ...'
-          onChange={e => setZipCode(e.currentTarget.value)}
+          onChange={handleZipCode}
           value={zipCode}
           style={{ borderColor: errors.zip ? theme.errorColor : theme.borderColor }}
         />
@@ -535,8 +518,6 @@ export const TripForm = (props: Props) => {
       <ButtonSubmit>
         Save <FiCheck />
       </ButtonSubmit>
-
-      {props.apiTripError && <ErrorAPI errorText={props.apiTripError.toString} />}
     </form>
   );
 };

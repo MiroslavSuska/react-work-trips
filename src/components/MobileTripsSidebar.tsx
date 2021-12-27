@@ -1,18 +1,23 @@
+import { Loader } from './Loader';
 import { TheTripMobile } from './TheTripMobile';
 import { TripContext } from '../context/TripContext';
 import { theme } from '../styles/theme';
+import { useAppSelector } from '../app/hooks';
 import { useContext } from 'react';
 import styled from 'styled-components';
 
 export const MobileTripsSidebar = () => {
-  const { trips } = useContext(TripContext);
+  const { loadingAPI } = useContext(TripContext);
+  const tripsRedux = useAppSelector(store => store.trips);
 
   return (
     <DivContainer>
       <h1>Trips</h1>
       <div>
+        {loadingAPI && <Loader />}
+
         <Ul>
-          {trips.map((trip, index) => (
+          {tripsRedux.map((trip, index) => (
             <Li key={index}>
               <TheTripMobile
                 id={trip.id}

@@ -21,7 +21,7 @@ type countryType = {
   label: string;
 };
 
-type flashMessageType = {
+export type flashMessageType = {
   display: boolean;
   type: 'success' | 'error';
   text: string;
@@ -30,16 +30,16 @@ type flashMessageType = {
 type ContextProps = {
   trips: tripType[];
   countries: countryType[];
-  tripErrorAPI: any;
-  countryErrorAPI: any;
+  tripErrorAPI: string;
+  countryErrorAPI: string;
   loadingAPI: boolean;
   flashMessage: flashMessageType;
   flashDisplay: boolean;
   addTrips: (fetchedTrips: tripType[] | tripType) => void;
   deleteTrip: (tripID: string) => void;
   addCountries: (fetchedCountries: countryType[]) => void;
-  setTripErrorAPI: React.Dispatch<any>;
-  setCountryErrorAPI: React.Dispatch<any>;
+  setTripErrorAPI: React.Dispatch<string>;
+  setCountryErrorAPI: React.Dispatch<string>;
   setLoadingAPI: React.Dispatch<boolean>;
   setFlashMessage: React.Dispatch<flashMessageType>;
   setFlashDisplay: React.Dispatch<boolean>;

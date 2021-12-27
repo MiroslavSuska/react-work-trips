@@ -9,7 +9,7 @@ export const FlashMessage = () => {
   useEffect(() => {
     const messageTime = setTimeout(() => {
       setFlashMessage({ display: false, type: flashMessage.type, text: flashMessage.text });
-    }, 3000);
+    }, 3500);
 
     return () => {
       clearTimeout(messageTime);
@@ -41,4 +41,13 @@ const DivFlashMessage = styled.div({
   right: '60px',
   zIndex: 9999,
   transition: 'all .4s ease',
+  '@media all and (max-width: 750px)': {
+    padding: '10px',
+    fontWeight: 'normal',
+    bottom: '40px',
+    left: '50%',
+    transform: 'translateX(-50%)',
+    maxWidth: '80%',
+    minWidth: '70%',
+  },
 });

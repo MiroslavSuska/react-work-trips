@@ -1,56 +1,15 @@
 import { AiOutlinePlus } from 'react-icons/ai';
 import { BsClock } from 'react-icons/bs';
 import { FaBars } from 'react-icons/fa';
-import { FlashMessage } from '../components/FlashMessage';
 import { Link } from 'react-router-dom';
-import { TripContext } from '../context/TripContext';
-import { addCountries } from '../features/countries/countrySlice';
-import { addTrips } from '../features/trips/tripSlice';
-import { authAxios } from '../API-config/configAPI';
 import { theme } from '../styles/theme';
-import { useAppDispatch } from '../app/hooks';
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import logo from '../images/logo.jpg';
 import styled from 'styled-components';
 
 export const Navigation = () => {
   const [mobileNavbar, setMobileNavbar] = useState(false);
   const [windowSize, setWindowSize] = useState(window.innerWidth);
-  const { setTripErrorAPI, setCountryErrorAPI, setLoadingAPI } = useContext(TripContext);
-
-  const dispatch = useAppDispatch();
-
-  // Fetch data
-  useEffect(() => {
-    const fetchTripData = async () => {
-      setLoadingAPI(true);
-      try {
-        const response = await authAxios.get('trip');
-        const fetchedTrips = response.data;
-        dispatch(addTrips(fetchedTrips));
-        addTrips(fetchedTrips);
-      } catch (err) {
-        setTripErrorAPI(err);
-        //console.log(err);
-      }
-      setLoadingAPI(false);
-    };
-
-    const fetchCountryData = async () => {
-      try {
-        const response = await authAxios.get('country');
-        const fetchedCountries = await response.data;
-
-        dispatch(addCountries(fetchedCountries));
-      } catch (err) {
-        setCountryErrorAPI(err);
-        //console.log(err);
-      }
-    };
-
-    fetchTripData();
-    fetchCountryData();
-  }, []);
 
   // handle windowSize on resize
   useEffect(() => {
@@ -100,8 +59,6 @@ export const Navigation = () => {
           </Li>
         </UlNavigation>
       </NavStyled>
-
-      <FlashMessage />
     </DivNavContainer>
   );
 };
@@ -137,30 +94,13 @@ const DivNavContainer = styled.div({
 });
 
 const NavStyled = styled.nav({
-  //position: 'fixed',
-  //left: 0,
-  //top: 0,
-  //height: '100%',
-  //maxWidth: '240px',
   width: '100%',
-
-  // '@media all and (max-width: 1000px)': {
-  //   maxWidth: '200px',
-  //   padding: '40px 18px 18px 18px',
-  // },
-  // '@media all and (max-width: 800px)': {
-  //   paddingTop: '20px',
-  // },
-  // '@media all and (max-width: 750px)': {
-  //   maxWidth: '100%',
-  //   zIndex: 60,
-  // },
 });
 
 const ButtonBurger = styled.button({
   display: 'none',
   backgroundColor: theme.primaryGrey,
-  border: 'none',
+  border: `1px solid ${theme.borderColor}`,
   borderRadius: '10px',
   width: '40px',
   height: '40px',

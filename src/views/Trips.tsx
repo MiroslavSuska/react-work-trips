@@ -1,6 +1,6 @@
 import '../styles/animations.css';
 import { ErrorAPI } from '../components/ErrorAPI';
-import { Loading } from '../components/Loading';
+import { Loader } from '../components/Loader';
 import { TheTrip } from '../components/TheTrip';
 import { TheTripMobile } from '../components/TheTripMobile';
 import { TipAndTrickSidebar } from '../components/TipAndTrickSidebar';
@@ -8,7 +8,6 @@ import { TripContext } from '../context/TripContext';
 import { theme } from '../styles/theme';
 import { useAppSelector } from '../app/hooks';
 import { useContext, useEffect } from 'react';
-import TransitionGroup from 'react-transition-group/TransitionGroup';
 import styled from 'styled-components';
 
 export const Trips = () => {
@@ -25,14 +24,14 @@ export const Trips = () => {
         <H1>Your trips</H1>
         <div>
           {tripErrorAPI && <ErrorAPI errorText={tripErrorAPI} />}
-          {loadingAPI && <Loading />}
+          {loadingAPI && <Loader />}
 
           {/* Trips for large screen */}
 
           {!loadingAPI && tripsRedux.length === 0 ? (
             <h2>No trips yet</h2>
           ) : (
-            <TransitionGroup component='ul' className='trip'>
+            <UlBigScreen>
               {tripsRedux.map((trip, index) => (
                 <Li key={index}>
                   <TheTrip
@@ -46,7 +45,7 @@ export const Trips = () => {
                   />
                 </Li>
               ))}
-            </TransitionGroup>
+            </UlBigScreen>
           )}
 
           {/* Trips for small screen */}

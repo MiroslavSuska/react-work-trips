@@ -1,6 +1,7 @@
 import './index.css';
 import { Provider } from 'react-redux';
 import { BrowserRouter as Router } from 'react-router-dom';
+import { TripContextProvider } from './context/TripContext';
 import { store } from './app/store';
 import App from './App';
 import React from 'react';
@@ -11,7 +12,9 @@ ReactDOM.render(
   <React.StrictMode>
     <Router>
       <Provider store={store}>
-        <App />
+        <TripContextProvider>
+          <App />
+        </TripContextProvider>
       </Provider>
     </Router>
   </React.StrictMode>,

@@ -1,40 +1,90 @@
 //import { DivBody } from './styles/GlobalStyle';
+import { AxiosError } from 'axios';
+import { FlashMessage } from './components/FlashMessage';
 import { Navigation } from './router/Navigation';
 import { Route, Switch } from 'react-router-dom';
-import { TripContextProvider } from './context/TripContext';
+import { TripContext } from './context/TripContext';
 import { TripCreate } from './views/TripCreate';
 import { TripDetail } from './views/TripDetail';
 import { TripEdit } from './views/TripEdit';
 import { Trips } from './views/Trips';
+import { addCountries } from './features/countries/countrySlice';
+import { addTrips } from './features/trips/tripSlice';
+import { authAxios } from './API-config/configAPI';
+import { handleError } from './helperFunctions/handleError';
 import { theme } from './styles/theme';
+import { useAppDispatch } from './app/hooks';
+import { useContext, useEffect } from 'react';
 import styled from 'styled-components';
 
 export default function App() {
-  return (
-    <TripContextProvider>
-      <DivApp>
-        <DivNavbar>
-          <Navigation />
-        </DivNavbar>
+  const { setLoadingAPI, setFlashMessage, setTripErrorAPI, setCountryErrorAPI } =
+    useContext(TripContext);
+  const dispatch = useAppDispatch();
 
-        <DivMain>
-          <Switch>
-            <Route exact path='/trips/new/create'>
-              <TripCreate />
-            </Route>
-            <Route exact path='/trips/edit/:tripID'>
-              <TripEdit />
-            </Route>
-            <Route exact path={`/trips/:tripID`}>
-              <TripDetail />
-            </Route>
-            <Route exact path='/'>
-              <Trips />
-            </Route>
-          </Switch>
-        </DivMain>
-      </DivApp>
-    </TripContextProvider>
+  // Fetch data
+  useEffect(() => {
+    const fetchTripData = async () => {
+      setLoadingAPI(true);
+      try {
+        const response = await authAxios.get('trip');
+        const fetchedTrips = await response.data;
+        dispatch(addTrips(fetchedTrips));
+
+        setTripErrorAPI('');
+      } catch (error) {
+        const err = error as AxiosError;
+        handleError(err, 'Trip data', setFlashMessage);
+        setTripErrorAPI(err.message);
+        //console.error(err);
+      }
+      setLoadingAPI(false);
+    };
+
+    const fetchCountryData = async () => {
+      try {
+        const response = await authAxios.get('country');
+        const fetchedCountries = await response.data;
+        dispatch(addCountries(fetchedCountries));
+
+        setCountryErrorAPI('');
+      } catch (error) {
+        const err = error as AxiosError;
+        handleError(err, 'Country data', setFlashMessage);
+        setCountryErrorAPI(err.message);
+        //console.error(err);
+      }
+    };
+
+    fetchTripData();
+    fetchCountryData();
+  }, []);
+
+  return (
+    <DivApp>
+      <DivNavbar>
+        <Navigation />
+      </DivNavbar>
+
+      <DivMain>
+        <Switch>
+          <Route exact path='/trips/new/create'>
+            <TripCreate />
+          </Route>
+          <Route exact path='/trips/edit/:tripID'>
+            <TripEdit />
+          </Route>
+          <Route exact path={`/trips/:tripID`}>
+            <TripDetail />
+          </Route>
+          <Route exact path='/'>
+            <Trips />
+          </Route>
+        </Switch>
+      </DivMain>
+
+      <FlashMessage />
+    </DivApp>
   );
 }
 
@@ -60,6 +110,7 @@ export const DivNavbar = styled.div({
 
 export const DivApp = styled.div({
   display: 'flex',
+  position: 'relative',
   fontFamily: 'Open Sans',
   minHeight: '100vh',
   backgroundColor: theme.primaryWhite,
